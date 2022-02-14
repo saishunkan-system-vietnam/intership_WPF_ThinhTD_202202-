@@ -1,7 +1,9 @@
-﻿using Services;
+﻿using DevExpress.Xpf.PdfViewer;
+using Services;
 using Syncfusion.Pdf.Parsing;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -29,11 +31,12 @@ namespace View
         public popViewCV(byte[] cvFile)
         {
             string base64String = Convert.ToBase64String(cvFile);
-            pdfLoadCV = new Syncfusion.Windows.PdfViewer.PdfViewerControl();
+            pdfLoadCV = new PdfViewerControl();
+            //pdfLoadCV = new Syncfusion.Windows.PdfViewer.PdfViewerControl();
             PdfLoadedDocument pdf = new PdfLoadedDocument(cvFile);
-            MemoryStream ms = new MemoryStream(cvFile);
-            pdfLoadCV.ItemSource = ms;
-            //pdfLoadCV.Load(pdf);
+            FileStream stream = new FileStream("/SSV - Calendar 2022.pdf", FileMode.Open);
+            pdfLoadCV.DocumentSource = stream;
+            //pdfLoadCV. = "data:application/pdf;base64," + base64String;
             InitializeComponent();
         }
     }

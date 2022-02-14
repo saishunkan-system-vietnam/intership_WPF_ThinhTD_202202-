@@ -177,6 +177,7 @@ namespace View.ViewModel
                                 candidate.TitleID = TitleID;
                                 candidate.PresenterId = PresenterID;
                                 candidate.CVFile = fileCV;
+                                candidate.CVFileName = FileName;
                                 db.Candidate.Add(Candidate);
                                 db.SaveChanges();
                                 LoadCandidate();
@@ -187,6 +188,7 @@ namespace View.ViewModel
                                 candidate.TitleID = TitleID;
                                 candidate.PresenterId = PresenterID;
                                 candidate.CVFile = fileCV;
+                                candidate.CVFileName = FileName;
                                 db.Candidate.Update(Candidate);
                                 db.SaveChanges();
                                 LoadCandidate();
@@ -198,31 +200,6 @@ namespace View.ViewModel
                             throw;
                         }
                     }));
-            }
-        }
-
-
-        private RelayCommand _viewCVCommand;
-
-        public RelayCommand ViewCVCommand
-        {
-            get
-            {
-                return _viewCVCommand ??
-                    (_viewCVCommand = new RelayCommand(p =>
-                    {
-                        try
-                        {
-                            popViewCV popViewCV = new popViewCV();
-                            popViewCV.Close();
-                        }
-                        catch (Exception)
-                        {
-
-                            throw;
-                        }
-                    }));
-
             }
         }
 
@@ -376,6 +353,7 @@ namespace View.ViewModel
             foreach (Candidate item in listCandidate)
             {
                 item.ViewCV = new RelayCommand(p => {
+
                     popViewCV popViewCV = new popViewCV(item.CVFile);
                     popViewCV.ShowDialog();
                 });

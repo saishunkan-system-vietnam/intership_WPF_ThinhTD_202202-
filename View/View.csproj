@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="devexpress.wpf.pdfviewer" Version="21.2.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -32,6 +33,10 @@
 
   <ItemGroup>
     <Resource Include="searchIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CVFiles\" />
   </ItemGroup>
 
 </Project>

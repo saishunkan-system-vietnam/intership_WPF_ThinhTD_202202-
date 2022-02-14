@@ -49,7 +49,7 @@
                 </StackPanel>
                 <StackPanel  Grid.Row="2">
                     <TextBlock Text="Họ tên" Margin="10,0"></TextBlock>
-                    <TextBox Margin="10" Height="30" Text="{Binding Candidate.FullName, Mode=OneWay}"></TextBox>
+                    <TextBox Margin="10" Height="30" Text="{Binding Candidate.FullName}"></TextBox>
                 </StackPanel>
                 <StackPanel Grid.Row="2" Grid.Column="1">
                     <TextBlock Text="Phone" Margin="10,0"></TextBlock>

@@ -4,12 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
-       
-        xmlns:PdfViewer="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF" xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="View.popViewCV"
-        xmlns:dxpdf ="clr-namespace:DevExpress.Pdf;assembly=DevExpress.Pdf.v21.2.Core"
+        xmlns:PdfViewer="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF" xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="View.popViewCV"        
+        xmlns:ViewModel="clr-namespace:View.ViewModel"
         mc:Ignorable="d"
         Title="popViewCV" Height="450" Width="800">
+    <Window.DataContext>
+        <ViewModel:ViewModelBase/>
+    </Window.DataContext>
     <DockPanel>
-        <dxpdf:PdfViewerControl />
+        <dxpdf:PdfViewerControl x:Name="pdfLoadCV" DocumentSource="{Binding }"/>
+        <!--<PdfViewer:PdfViewerControl x:Name="pdfLoadCV"/>-->
     </DockPanel>
 </Window>

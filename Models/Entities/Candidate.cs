@@ -12,6 +12,7 @@ namespace Models.Entities
         public string FullName { get; set; }
         public int TitleID { get; set; }
         public byte[] CVFile { get; set; }
+        public string CVFileName { get; set; }
         public string Phone { get; set; }
         public DateTime BirthDay { get; set; }
         public string Email { get; set; }
