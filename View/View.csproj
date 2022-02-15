@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="searchIcon.png" />
+    <None Remove="474-4748228_tick-logo-png-tick-mark-with-circle-icon.png" />
+    <None Remove="807714.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,11 +33,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="searchIcon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="CVFiles\" />
+    <Resource Include="474-4748228_tick-logo-png-tick-mark-with-circle-icon.png" />
+    <Resource Include="807714.png" />
   </ItemGroup>
 
 </Project>

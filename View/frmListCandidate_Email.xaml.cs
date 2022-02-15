@@ -15,13 +15,18 @@ using System.Windows.Shapes;
 namespace View
 {
     /// <summary>
-    /// Interaction logic for frmReviewCV.xaml
+    /// Interaction logic for frmListCandidate_Email.xaml
     /// </summary>
-    public partial class frmReviewCV : Window
+    public partial class frmListCandidate_Email : Window
     {
-        public frmReviewCV()
+        public frmListCandidate_Email()
         {
             InitializeComponent();
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

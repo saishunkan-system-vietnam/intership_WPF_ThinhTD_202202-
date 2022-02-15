@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Models.Entities
@@ -8,6 +10,8 @@ namespace Models.Entities
     {
         [NotMapped]
         public int SortNumber { get; set; }
+        [NotMapped]
+        public bool IsChecked { get; set; }
         public int Id { get; set; }
         public string FullName { get; set; }
         public int TitleID { get; set; }
@@ -28,5 +32,19 @@ namespace Models.Entities
         public ICommand Delete { get; set; }
         [NotMapped]
         public ICommand ViewCV { get; set; }
+        [NotMapped]
+        public ICommand Save { get; set; }
+        [NotMapped]
+        public ICommand Accept { get; set; }
+        [NotMapped]
+        public ICommand Remove { get; set; }
+        [NotMapped]
+        public ICommand ChangeCheck { get; set; }
+        public virtual Candidate_Apply CandiDate_Apply { get; set; }
+        public virtual Candidate_Email Candidate_Email { get; set; }
+        [NotMapped]
+        public Visibility IsView { get; set; }
+        [NotMapped]
+        public Visibility IsAction { get; set; }
     }
 }

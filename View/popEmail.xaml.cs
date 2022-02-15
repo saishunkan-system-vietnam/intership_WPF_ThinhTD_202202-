@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace View
 {
     /// <summary>
-    /// Interaction logic for frmListApplyer.xaml
+    /// Interaction logic for popEmail.xaml
     /// </summary>
-    public partial class frmListApplyer : Window
+    public partial class popEmail : Window
     {
-        public frmListApplyer()
+        public popEmail()
         {
             InitializeComponent();
         }

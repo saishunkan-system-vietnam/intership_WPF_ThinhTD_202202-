@@ -25,6 +25,8 @@ namespace DBContexts
             modelBuilder.ApplyConfiguration(new PositionConfiguration());
             modelBuilder.ApplyConfiguration(new TitleConfiguration());
             modelBuilder.ApplyConfiguration(new CandidateConfiguration());
+            modelBuilder.ApplyConfiguration(new Candidate_EmailConfiguration());
+            modelBuilder.ApplyConfiguration(new Candidate_ApplyConfiguration());
             base.OnModelCreating(modelBuilder);
         }
 
@@ -39,5 +41,7 @@ namespace DBContexts
         public DbSet<Position> Position { get; set; }
         public DbSet<Titles> Titles { get; set; }
         public DbSet<Candidate> Candidate { get; set; }
+        public DbSet<Candidate_Email> Candidate_Email { get; set; }
+        public DbSet<Candidate_Apply> Candidate_Apply { get; set; }
     }
 }
