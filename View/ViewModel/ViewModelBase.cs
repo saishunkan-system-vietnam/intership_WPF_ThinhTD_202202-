@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Windows;
 
 namespace View.ViewModel
@@ -17,7 +19,7 @@ namespace View.ViewModel
         public event PropertyChangedEventHandler? PropertyChanged;
         private AppDbContext db = null;
         int candidateID;
-        private byte[] fileCV;
+        private byte[] fileCV, attachment;
         private bool isAdd { get; set; }
         public Candidate candidateItem { get; set; }
         private Candidate candidate;
@@ -38,6 +40,26 @@ namespace View.ViewModel
             {
                 buttonContent = value;
                 OnPropertyChanged("ButtonContent");
+            }
+        }
+        private string viewCVTitle;
+        public string ViewCVTitle
+        {
+            get { return viewCVTitle; }
+            set
+            {
+                viewCVTitle = value;
+                OnPropertyChanged("ViewCVTitle");
+            }
+        }
+        private string titlePopSave;
+        public string TitlePopSave
+        {
+            get { return titlePopSave; }
+            set
+            {
+                titlePopSave = value;
+                OnPropertyChanged("TitlePopSave");
             }
         }
         private string titleEmail;
@@ -70,14 +92,44 @@ namespace View.ViewModel
                 OnPropertyChanged("StatusButton");
             }
         }
-        private Visibility showList;
-        public Visibility ShowList
+        private Visibility showPopEmail;
+        public Visibility ShowPopEmail
         {
-            get { return showList; }
+            get { return showPopEmail; }
             set
             {
-                showList = value;
-                OnPropertyChanged("ShowList");
+                showPopEmail = value;
+                OnPropertyChanged("ShowPopEmail");
+            }
+        }
+        private Visibility showConfirmEmail;
+        public Visibility ShowConfirmEmail
+        {
+            get { return showConfirmEmail; }
+            set
+            {
+                showConfirmEmail = value;
+                OnPropertyChanged("ShowConfirmEmail");
+            }
+        }
+        private Visibility showUpdateEmail;
+        public Visibility ShowUpdateEmail
+        {
+            get { return showUpdateEmail; }
+            set
+            {
+                showUpdateEmail = value;
+                OnPropertyChanged("ShowUpdateEmail");
+            }
+        }
+        private Visibility showAddCandidate;
+        public Visibility ShowAddCandidate
+        {
+            get { return showAddCandidate; }
+            set
+            {
+                showAddCandidate = value;
+                OnPropertyChanged("ShowAddCandidate");
             }
         }
         private List<Titles> listTitle;
@@ -194,14 +246,94 @@ namespace View.ViewModel
                 OnPropertyChanged("FileName");
             }
         }
-        private FileStream sourceCV;
+        private MemoryStream sourceCV;
 
-        public FileStream SourceCV
+        public MemoryStream SourceCV
         {
             get { return sourceCV; }
             set { 
                 sourceCV = value;
                 OnPropertyChanged("SourceCV");
+            }
+        }
+        private bool enableListEmail;
+
+        public bool EnableListEmail
+        {
+            get { return enableListEmail; }
+            set { 
+                enableListEmail = value;
+                OnPropertyChanged("EnableListEmail");
+            }
+        }
+        private bool enableListCandidate;
+
+        public bool EnableListCandidate
+        {
+            get { return enableListCandidate; }
+            set {
+                enableListCandidate = value;
+                OnPropertyChanged("EnableListCandidate");
+            }
+        }
+        private bool acceptButton;
+
+        public bool AcceptButton
+        {
+            get { return acceptButton; }
+            set {
+                acceptButton = value;
+                OnPropertyChanged("AcceptButton");
+            }
+        }
+        private bool removeButton;
+
+        public bool RemoveButton
+        {
+            get { return removeButton; }
+            set {
+                removeButton = value;
+                OnPropertyChanged("RemoveButton");
+            }
+        }
+        private bool checkAll;
+
+        public bool CheckAll
+        {
+            get { return checkAll; }
+            set {
+                checkAll = value;
+                OnPropertyChanged("CheckAll");
+            }
+        }
+        private bool enableInputEmail;
+
+        public bool EnableInputEmail
+        {
+            get { return enableInputEmail; }
+            set {
+                enableInputEmail = value;
+                OnPropertyChanged("EnableInputEmail");
+            }
+        }
+        private Visibility showNote;
+
+        public Visibility ShowNote
+        {
+            get { return showNote; }
+            set {
+                showNote = value;
+                OnPropertyChanged("ShowNote");
+            }
+        }
+        private string attachmentName;
+
+        public string AttachmentName
+        {
+            get { return attachmentName; }
+            set { 
+                attachmentName = value;
+                OnPropertyChanged("AttachmentName");
             }
         }
 
@@ -211,12 +343,13 @@ namespace View.ViewModel
         }
         public ViewModelBase()
         {
-            showList = Visibility.Visible;
-            isAdd = true;
-            statusButton = Visibility.Hidden;
+            enableListCandidate = enableListEmail = isAdd = true;
+            enableInputEmail = false;
+            showNote = showAddCandidate = showConfirmEmail = showUpdateEmail = showPopEmail = statusButton = Visibility.Hidden;
             db = new AppDbContext();
             candidate = new Candidate();
             LoadCandidate();
+            CheckCv();
             listTitle = db.Titles.ToList();
             listPosition = db.Position.ToList();
             listPresenter = db.Presenter.ToList();
@@ -241,7 +374,6 @@ namespace View.ViewModel
                                 candidate.TitleID = TitleID;
                                 candidate.PresenterId = PresenterID;
                                 candidate.CVFile = fileCV;
-                                File.WriteAllBytes(@"..\..\..\CVFiles\" + FileName, fileCV);
                                 candidate.CVFileName = FileName;
                                 db.Candidate.Add(Candidate);
                                 db.SaveChanges();
@@ -252,12 +384,23 @@ namespace View.ViewModel
                                 candidate.PositionId = PositionID;
                                 candidate.TitleID = TitleID;
                                 candidate.PresenterId = PresenterID;
-                                candidate.CVFile = fileCV;
-                                candidate.CVFileName = FileName;
+                                if (!candidate.CVFileName.Equals(FileName))
+                                {
+                                    candidate.CVFile = fileCV;
+                                    candidate.CVFileName = FileName;
+                                }
                                 db.Candidate.Update(Candidate);
                                 db.SaveChanges();
                                 LoadCandidate();
                             }
+                            EnableListCandidate = true;
+                            ShowAddCandidate = Visibility.Hidden;
+                            Candidate = null;
+                            PositionID = listPosition[0].Id;
+                            PresenterID = listPresenter[0].Id;
+                            TitleID = listPresenter[0].Id;
+                            fileCV = null;
+                            FileName = "";
                         }
                         catch (Exception)
                         {
@@ -267,34 +410,6 @@ namespace View.ViewModel
                     }));
             }
         }
-
-        
-
-        private RelayCommand _confirmCommand;
-
-        public RelayCommand ConfirmCommand
-        {
-            get
-            {
-                return _confirmCommand ??
-                    (_confirmCommand = new RelayCommand(p =>
-                    {
-                        try
-                        {
-                            foreach (Candidate candidate in ListCandidate)
-                            {
-                                
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                            throw;
-                        }
-                    }));
-            }
-        }
-
         private RelayCommand _chooseFileCommand;
 
         public RelayCommand ChooseFileCommand
@@ -321,6 +436,57 @@ namespace View.ViewModel
                     }));
             }
         }
+        
+
+        private RelayCommand _chooseattachmentCommand;
+
+        public RelayCommand ChooseAttachmentCommand
+        {
+            get
+            {
+                return _chooseattachmentCommand ??
+                    (_chooseattachmentCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            OpenFileDialog openFileDialog = new OpenFileDialog();
+                            if (openFileDialog.ShowDialog() == true)
+                            {
+                                AttachmentName = openFileDialog.SafeFileName;
+                                attachment = File.ReadAllBytes(openFileDialog.FileName);
+                            }
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }));
+            }
+        }
+
+        private RelayCommand _cancelNoteCommand;
+
+        public RelayCommand CancelNoteCommand
+        {
+            get
+            {
+                return _cancelNoteCommand ??
+                    (_cancelNoteCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            ShowNote = Visibility.Hidden;
+                            EnableListCandidate = true;
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }));
+            }
+        }
 
         private RelayCommand _openAddCommand;
 
@@ -333,10 +499,40 @@ namespace View.ViewModel
                     {
                         try
                         {
+                            TitlePopSave = "Thêm ứng viên";
                             ButtonContent = "Import";
+                            EnableListCandidate = false;
+                            ShowAddCandidate = Visibility.Visible;
                             isAdd = true;
-                            popAddCandidate popAddCandidate = new popAddCandidate();
-                            popAddCandidate.ShowDialog();
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }));
+            }
+        }
+
+        private RelayCommand _exitSaveCommand;
+
+        public RelayCommand ExitSaveCommand
+        {
+            get
+            {
+                return _exitSaveCommand ??
+                    (_exitSaveCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            EnableListCandidate = true;
+                            Candidate = null;
+                            PositionID = listPosition[0].Id;
+                            PresenterID = listPresenter[0].Id;
+                            TitleID = listPresenter[0].Id;
+                            fileCV = null;
+                            FileName = "";
+                            ShowAddCandidate = Visibility.Hidden;
                         }
                         catch (Exception)
                         {
@@ -362,9 +558,7 @@ namespace View.ViewModel
                             {
                                 item.ViewCV = new RelayCommand(p => {
                                     //popViewCV popViewCV = new popViewCV(item.CVFile);
-                                    sourceCV = new FileStream(@"..\..\..\CVFiles\0092-adobe-photoshop-tutorial.pdf", FileMode.Open);
-                                    popViewCV popViewCV = new popViewCV();
-                                    popViewCV.ShowDialog();
+                                    //sourceCV = new FileStream(@"..\..\..\CVFiles\0092-adobe-photoshop-tutorial.pdf", FileMode.Open);
                                 });
                                 item.Delete = new RelayCommand(p => {
                                     if (MessageBox.Show("Bạn có chắc chắn muốn xoá?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -398,8 +592,6 @@ namespace View.ViewModel
                             foreach (Candidate item in listCandidate)
                             {
                                 item.ViewCV = new RelayCommand(p => {
-                                    popViewCV popViewCV = new popViewCV();
-                                    popViewCV.Show();
                                 });
                                 item.Delete = new RelayCommand(p => {
                                     if (MessageBox.Show("Bạn có chắc chắn muốn xoá?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -438,19 +630,18 @@ namespace View.ViewModel
                     }));
             }
         }
-        private RelayCommand closeWPFCommand;
-        public RelayCommand CloseWPFCommand
+        private RelayCommand closePDFCommand;
+        public RelayCommand ClosePDFCommand
         {
             get
             {
-                return closeWPFCommand ??
-                    (closeWPFCommand = new RelayCommand(p =>
+                return closePDFCommand ??
+                    (closePDFCommand = new RelayCommand(p =>
                     {
                         try
                         {
-                            ShowList = Visibility.Visible;
+                            EnableListCandidate = true;
                             StatusButton = Visibility.Hidden;
-                            SourceCV.Close();
                         }
                         catch (Exception)
                         {
@@ -470,9 +661,12 @@ namespace View.ViewModel
                         try
                         {
 
-                            db.Candidate_Apply.Add((new Candidate_Apply(candidateID, 1, Note)));
+                            db.Candidate_Apply.Add((new Candidate_Apply(candidate.Id, 1, Note)));
                             db.SaveChanges();
                             LoadCandidate();
+                            ShowNote = Visibility.Hidden;
+                            EnableListCandidate = true;
+                            candidate = null;
                         }
                         catch (Exception)
                         {
@@ -491,8 +685,9 @@ namespace View.ViewModel
                     {
                         try
                         {
-                            popEmail popEmail = new popEmail();
-                            popEmail.ShowDialog();
+                            ShowPopEmail = ShowConfirmEmail = Visibility.Visible;
+                            EnableInputEmail = true;
+                            EnableListEmail = false;
                         }
                         catch (Exception)
                         {
@@ -515,13 +710,155 @@ namespace View.ViewModel
                             {
                                 if (item.IsChecked == true)
                                 {
-                                    Candidate_Email candidateEmail = new Candidate_Email();
-                                    candidateEmail.CandidateID = item.Id;
-                                    candidateEmail.Title = TitleEmail;
-                                    candidateEmail.ContentEmail = ContentEmail;
-                                    db.Candidate_Email.Add(candidateEmail);
-                                    db.SaveChanges();
+                                    if (item.Candidate_Email == null)
+                                    {
+                                        Candidate_Email candidateEmail = new Candidate_Email();
+                                        candidateEmail.CandidateID = item.Id;
+                                        candidateEmail.Title = TitleEmail;
+                                        candidateEmail.ContentEmail = ContentEmail;
+                                        candidateEmail.Attachment = attachment;
+                                        candidateEmail.Attachment_Name = attachmentName;
+                                        db.Candidate_Email.Add(candidateEmail);
+                                        db.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        Candidate_Email candidateEmail = item.Candidate_Email;
+                                        candidateEmail.Title = TitleEmail;
+                                        candidateEmail.ContentEmail = ContentEmail;
+                                        if (!candidateEmail.Attachment_Name.Equals(attachmentName))
+                                        {
+                                            candidateEmail.Attachment_Name = attachmentName;
+                                            candidateEmail.Attachment = attachment;
+                                        }
+                                        db.Candidate_Email.Update(candidateEmail);
+                                        db.SaveChanges();
+                                    }
                                 }
+                            }
+                            TitleEmail = "";
+                            ContentEmail = "";
+                            ShowConfirmEmail = ShowPopEmail = Visibility.Hidden;
+                            EnableInputEmail = false;
+                            EnableListEmail = true;
+                            LoadCandidate();
+                        }
+                        catch (Exception)
+                        {
+                            throw;
+                        }
+                    }));
+            }
+        }
+
+        
+        private RelayCommand updateMailCommand;
+        public RelayCommand UpdateMailCommand
+        {
+            get
+            {
+                return updateMailCommand ??
+                    (updateMailCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            Candidate_Email candidateEmail = candidate.Candidate_Email;
+                            candidateEmail.Title = TitleEmail;
+                            candidateEmail.ContentEmail = ContentEmail;
+                            db.Candidate_Email.Update(candidateEmail);
+                            db.SaveChanges();
+                            TitleEmail = "";
+                            ContentEmail = "";
+                            ShowUpdateEmail = ShowPopEmail = Visibility.Hidden;
+                            EnableInputEmail = false;
+                            EnableListEmail = true;
+                        }
+                        catch (Exception)
+                        {
+                            throw;
+                        }
+                    }));
+            }
+        }
+
+        
+        private RelayCommand sendMailCommand;
+        public RelayCommand SendMailCommand
+        {
+            get
+            {
+                return sendMailCommand ??
+                    (sendMailCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            foreach (Candidate item in listCandidate)
+                            {
+                                if (item.IsChecked == true)
+                                {
+                                    MemoryStream ms = new MemoryStream(item.Candidate_Email.Attachment);
+                                    Attachment attachment = new Attachment(ms, item.Candidate_Email.Attachment_Name);
+                                    SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+                                    client.Credentials = new NetworkCredential("tt21052000@gmail.com", "T21052000@");
+                                    client.EnableSsl = true;
+                                    MailMessage message = new MailMessage("tt21052000@gmail.com", item.Email, item.Candidate_Email.Title, item.Candidate_Email.ContentEmail);
+                                    if (attachment != null)
+                                    {
+                                        message.Attachments.Add(attachment);
+                                    }
+                                    client.Host = "smtp.gmail.com";
+                                    client.Send(message);
+                                    client.Dispose();
+                                }
+                            }
+
+                            MessageBox.Show("Gửi thành công", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        catch (Exception)
+                        {
+                            throw;
+                        }
+                    }));
+            }
+        }
+        
+        private RelayCommand exitMailCommand;
+        public RelayCommand ExitMailCommand
+        {
+            get
+            {
+                return exitMailCommand ??
+                    (exitMailCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            TitleEmail = "";
+                            ContentEmail = "";
+                            ShowConfirmEmail = ShowUpdateEmail = ShowPopEmail = Visibility.Hidden;
+                            EnableInputEmail = false;
+                            EnableListEmail = true;
+                        }
+                        catch (Exception)
+                        {
+                            throw;
+                        }
+                    }));
+            }
+        }
+        
+        private RelayCommand checkCandidateCommand;
+        public RelayCommand CheckCandidateCommand
+        {
+            get
+            {
+                return checkCandidateCommand ??
+                    (checkCandidateCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            foreach (Candidate item in ListCandidate)
+                            {
+                                item.IsChecked = CheckAll;
                             }
                         }
                         catch (Exception)
@@ -532,7 +869,24 @@ namespace View.ViewModel
             }
         }
 
+        private void CheckCv()
+        {
+            candidate.Accept = new RelayCommand(p =>
+            {
+                db.Candidate_Apply.Add((new Candidate_Apply(candidate.Id, 1, null)));
+                db.SaveChanges();
+                LoadCandidate();
+                EnableListCandidate = true;
+                StatusButton = Visibility.Hidden;
+                candidate = null;
+            });
+            candidate.Remove = new RelayCommand(p =>
+            {
+                ShowNote = Visibility.Visible;
+                EnableListCandidate = false;
 
+            });
+        }
 
         private void LoadCandidate()
         {
@@ -540,42 +894,72 @@ namespace View.ViewModel
             ListCandidate = db.Candidate.ToList();
             foreach (Candidate item in ListCandidate)
             {
+                item.Candidate_Email = db.Candidate_Email.FirstOrDefault(x => x.CandidateID.Equals(item.Id));
+                item.CandiDate_Apply = db.Candidate_Apply.FirstOrDefault(x => x.CandidateId.Equals(item.Id));
                 if (item.Candidate_Email != null)
                 {
+                    item.IsViewMail = Visibility.Visible;
                     if (item.Candidate_Email.Contactable == 1)
                     {
                         item.IsChecked = true;
                     }
                 }
+                else
+                {
+                    item.IsViewMail = Visibility.Hidden;
+                }
                 item.SortNumber = i;
                 i++;
-                if (item.CandiDate_Apply == null)
+                string[] str = item.CVFileName.Split('.');
+                if (str[1].ToLower().Equals("pdf"))
+                {
+
+                    item.IsAction = Visibility.Hidden;
+                    item.IsView = Visibility.Visible;
+                }
+                else
                 {
                     item.IsAction = Visibility.Visible;
                     item.IsView = Visibility.Hidden;
                 }
-                else
-                {
-                    item.IsAction = Visibility.Hidden;
-                    item.IsView = Visibility.Visible;
-                }
                 item.ViewCV = new RelayCommand(p => {
-                    ShowList = Visibility.Hidden;
+                    if (item.CandiDate_Apply != null)
+                    {
+                        if (item.CandiDate_Apply.Status == 1)
+                        {
+                            AcceptButton = true;
+                            RemoveButton = false;
+                        }
+                        else
+                        {
+                            AcceptButton = false;
+                            RemoveButton = true;
+                        }
+                    }
+                    else
+                    {
+
+                        AcceptButton = true;
+                        RemoveButton = true;
+                    }
+                    candidate = item;
+                    ViewCVTitle = "Xem cv ứng viên: " + item.FullName;
+                    EnableListCandidate = false;
                     StatusButton = Visibility.Visible;
                     FileName = item.CVFileName;
-                    SourceCV = new FileStream(@"..\..\..\CVFiles\" + FileName, FileMode.Open);
-                    //popViewCV popViewCV = new popViewCV(item.CVFileName);
-                    //popViewCV.ShowDialog();
+                    SourceCV = new MemoryStream(item.CVFile);
                 });
                 item.Edit = new RelayCommand(p => {
                     isAdd = false;
+                    EnableListCandidate = false;
+                    ShowAddCandidate = Visibility.Visible;
                     ButtonContent = "Save";
                     Candidate = item;
                     PresenterID = item.PresenterId;
                     PositionID = item.PositionId;
                     TitleID = item.TitleID;
-                    popAddCandidate popAddCandidate = new popAddCandidate();
-                    popAddCandidate.ShowDialog();
+                    FileName = item.CVFileName;
+                    TitlePopSave = "Chỉnh sửa thông tin ứng viên";
                 });
                 item.Delete = new RelayCommand(p => {
                     if (MessageBox.Show("Bạn có chắc chắn muốn xoá?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
@@ -601,8 +985,8 @@ namespace View.ViewModel
                 item.Remove = new RelayCommand(p =>
                 {
                     candidateID = item.Id;
-                    popNote popNote = new popNote();
-                    popNote.Show();
+                    ShowNote = Visibility.Visible;
+                    EnableListCandidate = false;
                 });
                 item.ChangeCheck = new RelayCommand(p =>
                 {
@@ -614,6 +998,15 @@ namespace View.ViewModel
                     {
                         item.IsChecked = true;
                     }
+                });
+                item.ViewEmail = new RelayCommand(p =>
+                {
+                    EnableListEmail = false;
+                    candidate = item;
+                    ShowPopEmail = ShowUpdateEmail = Visibility.Visible;
+                    EnableInputEmail = true;
+                    TitleEmail = item.Candidate_Email.Title;
+                    ContentEmail = item.Candidate_Email.ContentEmail;
                 });
             }
         }

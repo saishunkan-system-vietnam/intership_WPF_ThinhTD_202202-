@@ -10,6 +10,12 @@
   <ItemGroup>
     <None Remove="474-4748228_tick-logo-png-tick-mark-with-circle-icon.png" />
     <None Remove="807714.png" />
+    <None Remove="backIcon.png" />
+    <None Remove="download-icon-gif-11.jpg" />
+    <None Remove="download.png" />
+    <None Remove="images.png" />
+    <None Remove="preview+see+seen+view+icon-1320168711570288480.png" />
+    <None Remove="searchIcon.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +41,12 @@
   <ItemGroup>
     <Resource Include="474-4748228_tick-logo-png-tick-mark-with-circle-icon.png" />
     <Resource Include="807714.png" />
+    <Resource Include="backIcon.png" />
+    <Resource Include="download-icon-gif-11.jpg" />
+    <Resource Include="download.png" />
+    <Resource Include="images.png" />
+    <Resource Include="preview+see+seen+view+icon-1320168711570288480.png" />
+    <Resource Include="searchIcon.png" />
   </ItemGroup>
 
 </Project>

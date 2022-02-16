@@ -6,23 +6,18 @@
         xmlns:local="clr-namespace:View"
         xmlns:ViewModel="clr-namespace:View.ViewModel"
         mc:Ignorable="d"
-        Title="frmListCandidate" Height="769" Width="1400">
+        Title="frmListCandidate" Height="760" Width="1366" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <ViewModel:ViewModelBase></ViewModel:ViewModelBase>
     </Window.DataContext>
 
-    <Canvas>
-        <Canvas Background="White" Visibility="{Binding StatusButton}" Width="1400">
-            <PdfViewer:PdfDocumentView ItemSource="{Binding SourceCV}" Width="1381" Height="704" Canvas.Top="30"/>
-            <Button Command="{Binding CloseWPFCommand}" BorderBrush="White" Height="30" Width="30" Padding="0" Background="White" Canvas.Left="3">
-                <Image Source="/backIcon.png" Height="30" Width="30"></Image>
-            </Button>
-        </Canvas>
-        <StackPanel Visibility="{Binding ShowList}" Height="753" Width="1400">
+    <Canvas>        
+        <StackPanel IsEnabled="{Binding EnableListCandidate}" Height="753" Width="1366">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="372*"></ColumnDefinition>
+                    <ColumnDefinition Width="161*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"></RowDefinition>
@@ -36,7 +31,7 @@
                     </StackPanel>
                     <TextBox Width="200" Margin="0 10" Text="{Binding KeyWord}"></TextBox>
                 </StackPanel>
-                <Button Content="Tìm kiếm nâng cao" Command="{Binding AdvancedSearchCommand}" Width="130" Height="30" Grid.Column="1" HorizontalAlignment="Left" ></Button>
+                <Button Content="Tìm kiếm nâng cao" Command="{Binding AdvancedSearchCommand}" Width="130" Height="30" Grid.Column="1" HorizontalAlignment="Left" Margin="0,10,0,10" ></Button>
                 <StackPanel Grid.Row="1" Grid.Column="0">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -58,13 +53,13 @@
                     </Grid>
                 </StackPanel>
 
-                <StackPanel Grid.Row="3" Orientation="Horizontal"  Margin="20 10">
+                <StackPanel Grid.Row="2" Orientation="Horizontal"  Margin="20,10,20,10">
                     <Button Content="Tìm kiếm" Height="30" Command="{Binding SearchBasicCommand}" Padding="15 0" Margin="0 0 10 0"></Button>
                     <Button Content="Đặt lại" Height="30"  Padding="15 0" Command="{Binding ResetTableCommand}"></Button>
                 </StackPanel>
-                <Button Grid.Column="1" Grid.Row="2" Content="Add" Height="30" Width="60" Command="{Binding OpenAddCommand}" Margin="0 0 20 0" HorizontalAlignment="Right" ></Button>
+                <Button Grid.Column="2" Grid.Row="2" Content="Add" Height="30" Width="60" Command="{Binding OpenAddCommand}" Margin="242,10,0,10" HorizontalAlignment="Left" ></Button>
             </Grid>
-            <ListView ItemsSource="{Binding ListCandidate}" Height="566" Width="1398">
+            <ListView ItemsSource="{Binding ListCandidate}" Height="560" Width="1344" HorizontalAlignment="Left">
                 <ListView.View>
                     <GridView x:Name="Candidates">
                         <GridViewColumn Header="STT" Width="50">
@@ -101,7 +96,7 @@
 
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding BirthDay}"/>
+                                    <TextBlock Text="{Binding Path=BirthDay, StringFormat='dd/MM/yyyy'}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -142,22 +137,22 @@
                                 <DataTemplate>
                                     <Button Command="{Binding ViewCV}" Background="#FF97F3D8">
                                         <StackPanel Orientation="Horizontal">
-                                            <Image Width="15" Height="15" Source="/Images/preview+see+seen+view+icon-1320168711570288480.png"/>
+                                            <Image Width="15" Height="15" Source="/preview+see+seen+view+icon-1320168711570288480.png"/>
                                             <TextBlock Text=" ViewCV"/>
                                         </StackPanel>
                                     </Button>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Sửa" Width="100">
+                        <GridViewColumn Header="Hành động" Width="100">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <Button BorderBrush="White" Height="35" Width="35" Padding="0" Background="White" Command="{Binding Edit}">
-                                            <Image Source="/Images/images.png" Height="30" Width="30" />
+                                            <Image Source="/images.png" Height="30" Width="30" />
                                         </Button>
                                         <Button BorderBrush="White" Height="35" Width="35" Padding="0" Background="White" Command="{Binding Delete}">
-                                            <Image Source="/Images/807714.png" Height="30" Width="30" />
+                                            <Image Source="/807714.png" Height="30" Width="30" />
                                         </Button>
                                     </StackPanel>
                                 </DataTemplate>
@@ -167,5 +162,78 @@
                 </ListView.View>
             </ListView>
         </StackPanel>
+        <Border Canvas.Top="150" Canvas.Left="360" Width="625" BorderBrush="Gray" BorderThickness="1" Background="White" Visibility="{Binding ShowAddCandidate}">
+            <StackPanel>
+                <TextBlock Padding="15 5" Foreground="white" Text="{Binding TitlePopSave}" FontSize="14" FontWeight="Bold" Background="CadetBlue" Margin="0 0 0 10">
+                </TextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"></RowDefinition>
+                        <RowDefinition Height="60"></RowDefinition>
+                        <RowDefinition Height="60"></RowDefinition>
+                        <RowDefinition Height="60"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                        <TextBlock Margin="10,0" Text="Vị trí"></TextBlock>
+                        <ComboBox  Height="30" Margin="10" ItemsSource="{Binding ListTitle}"
+                              DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding TitleID}"></ComboBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Chức danh" Margin="10,0"></TextBlock>
+                        <ComboBox  Height="30" Margin="10" ItemsSource="{Binding ListPosition}"
+                              DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding PositionID}"></ComboBox>
+                    </StackPanel>
+                    <StackPanel  Grid.Row="1">
+                        <TextBlock Text="Import CV" Margin="10,0"></TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Text="{Binding FileName}" VerticalContentAlignment="Center" Margin="10 10 0 10" Height="30" Width="224" ></TextBox>
+                            <Button Height="30" Content="Browser" Command="{Binding ChooseFileCommand}" ></Button>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1">
+                        <TextBlock Text="Người giới thiệu" Margin="10,0"></TextBlock>
+                        <ComboBox  Height="30" Margin="10" ItemsSource="{Binding ListPresenter}"
+                              DisplayMemberPath="FullName" SelectedValuePath="Id" SelectedValue="{Binding PresenterID}"></ComboBox>
+                    </StackPanel>
+                    <StackPanel  Grid.Row="2">
+                        <TextBlock Text="Họ tên" Margin="10,0"></TextBlock>
+                        <TextBox Margin="10" Height="30" Text="{Binding Candidate.FullName}" VerticalContentAlignment="Center"></TextBox>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="1">
+                        <TextBlock Text="Phone" Margin="10,0"></TextBlock>
+                        <TextBox Margin="10" Height="30" Text="{Binding Candidate.Phone}" VerticalContentAlignment="Center"></TextBox>
+                    </StackPanel>
+                    <StackPanel  Grid.Row="3">
+                        <TextBlock Text="Birthday" Margin="10,0"></TextBlock>
+                        <DatePicker Margin="10"  Height="30" SelectedDate="{Binding Candidate.BirthDay}"  VerticalContentAlignment="Center" SelectedDateFormat="Short"></DatePicker>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Grid.Column="1">
+                        <TextBlock Text="Email" Margin="10,0"></TextBlock>
+                        <TextBox Margin="10" Height="30"  Text="{Binding Candidate.Email}" VerticalContentAlignment="Center"></TextBox>
+                    </StackPanel>
+                </Grid>
+                <StackPanel>
+                    <TextBlock Text="Address" Margin="10,0"></TextBlock>
+                    <TextBox Margin="10" Height="30" Text="{Binding Candidate.Address}" VerticalContentAlignment="Center"></TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Margin="10" Content="{Binding ButtonContent}" Width="100" Height="40" Background="CadetBlue" Foreground="White" Command="{Binding SaveCommand}"></Button>
+                    <Button Content="Hủy" Width="100" Height="40" Background="#FFD26B79" Foreground="White" Command="{Binding ExitSaveCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border Canvas.Top="20" Canvas.Left="220" Width="900" BorderBrush="Gray" BorderThickness="1" Background="White" Visibility="{Binding StatusButton}" >
+            <StackPanel Background="White">
+                <TextBlock Padding="15 5" Foreground="white" Text="{Binding ViewCVTitle}" FontSize="14" FontWeight="Bold" Background="CadetBlue" Margin="0 0 0 10">
+                </TextBlock>
+                <PdfViewer:PdfDocumentView ItemSource="{Binding SourceCV}" Width="900" Height="590" Canvas.Top="30"/>
+                <Button Content="Quay lại" Command="{Binding ClosePDFCommand}" BorderBrush="#FFD05D5D" Padding="5" Background="#FFD05D5D" Canvas.Left="3" HorizontalAlignment="Right" Margin="20 10" Foreground="White">
+                </Button>
+            </StackPanel>
+        </Border>
     </Canvas>
 </Window>

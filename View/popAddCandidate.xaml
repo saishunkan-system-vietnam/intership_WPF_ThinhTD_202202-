@@ -13,62 +13,6 @@
         <ViewModel:ViewModelBase></ViewModel:ViewModelBase>
     </Window.DataContext>
     <StackPanel>
-        <StackPanel Margin="0, 20, 0, 0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="60"></RowDefinition>
-                    <RowDefinition Height="60"></RowDefinition>
-                    <RowDefinition Height="60"></RowDefinition>
-                    <RowDefinition Height="60"></RowDefinition>
-                </Grid.RowDefinitions>
-                <StackPanel>
-                    <TextBlock Margin="10,0" Text="Vị trí"></TextBlock>
-                    <ComboBox  Height="30" Margin="10" ItemsSource="{Binding ListTitle}"
-                              DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding TitleID}"></ComboBox>
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <TextBlock Text="Chức danh" Margin="10,0"></TextBlock>
-                    <ComboBox  Height="30" Margin="10" ItemsSource="{Binding ListPosition}"
-                              DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding PositionID}"></ComboBox>
-                </StackPanel>
-                <StackPanel  Grid.Row="1">
-                    <TextBlock Text="Import CV" Margin="10,0"></TextBlock>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBox Text="{Binding FileName}" Margin="10 10 0 10" Height="30" Width="224" ></TextBox>
-                        <Button Height="30" Content="Browser" Command="{Binding ChooseFileCommand}" ></Button>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="1">
-                    <TextBlock Text="Người giới thiệu" Margin="10,0"></TextBlock>
-                    <ComboBox  Height="30" Margin="10" ItemsSource="{Binding ListPresenter}"
-                              DisplayMemberPath="FullName" SelectedValuePath="Id" SelectedValue="{Binding PresenterID}"></ComboBox>
-                </StackPanel>
-                <StackPanel  Grid.Row="2">
-                    <TextBlock Text="Họ tên" Margin="10,0"></TextBlock>
-                    <TextBox Margin="10" Height="30" Text="{Binding Candidate.FullName}"></TextBox>
-                </StackPanel>
-                <StackPanel Grid.Row="2" Grid.Column="1">
-                    <TextBlock Text="Phone" Margin="10,0"></TextBlock>
-                    <TextBox Margin="10" Height="30" Text="{Binding Candidate.Phone}"></TextBox>
-                </StackPanel>
-                <StackPanel  Grid.Row="3">
-                    <TextBlock Text="Birthday" Margin="10,0"></TextBlock>
-                    <DatePicker Margin="10" Height="30" Text="{Binding Candidate.BirthDay}"></DatePicker>
-                </StackPanel>
-                <StackPanel Grid.Row="3" Grid.Column="1">
-                    <TextBlock Text="Email" Margin="10,0"></TextBlock>
-                    <TextBox Margin="10" Height="30" Text="{Binding Candidate.Email}"></TextBox>
-                </StackPanel>
-            </Grid>
-            <StackPanel>
-                <TextBlock Text="Address" Margin="10,0"></TextBlock>
-                <TextBox Margin="10" Height="30" Text="{Binding Candidate.Address}"></TextBox>
-            </StackPanel>
-            <Button Margin="10" Content="{Binding ButtonContent}" Width="100" Height="40" Background="CadetBlue" Foreground="White" Command="{Binding SaveCommand}"></Button>
-        </StackPanel>
+        
     </StackPanel>
 </Window>

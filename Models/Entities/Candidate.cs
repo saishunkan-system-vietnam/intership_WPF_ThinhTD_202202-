@@ -40,10 +40,14 @@ namespace Models.Entities
         public ICommand Remove { get; set; }
         [NotMapped]
         public ICommand ChangeCheck { get; set; }
+        [NotMapped]
+        public ICommand ViewEmail { get; set; }
         public virtual Candidate_Apply CandiDate_Apply { get; set; }
         public virtual Candidate_Email Candidate_Email { get; set; }
         [NotMapped]
         public Visibility IsView { get; set; }
+        [NotMapped]
+        public Visibility IsViewMail { get; set; }
         [NotMapped]
         public Visibility IsAction { get; set; }
     }

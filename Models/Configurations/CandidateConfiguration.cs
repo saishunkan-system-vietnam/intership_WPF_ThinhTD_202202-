@@ -17,11 +17,11 @@ namespace Models.Configurations
             builder.Property(x => x.FullName)
                 .IsRequired();
             builder.Property(x => x.Email)
-                .HasMaxLength(20)
+                .HasMaxLength(200)
                 .HasColumnType("varchar");
             builder.Property(x => x.Phone)
                 .HasColumnType("varchar")
-                .HasMaxLength(10);
+                .HasMaxLength(12);
             builder.HasOne(x => x.Title)
                 .WithMany(x => x.Candidates)
                 .HasForeignKey(x => x.TitleID);

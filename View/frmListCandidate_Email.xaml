@@ -6,138 +6,164 @@
         xmlns:viewModel="clr-namespace:View.ViewModel"
         xmlns:local="clr-namespace:View"
         mc:Ignorable="d"
-        Title="frmListCandidate_Email" Height="753" Width="1523">
+        Title="frmListCandidate_Email" Height="760" Width="1366">
     <Window.DataContext>
         <viewModel:ViewModelBase></viewModel:ViewModelBase>
     </Window.DataContext>
-    <StackPanel>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="270"></ColumnDefinition>
-                <ColumnDefinition Width="170"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="150"></RowDefinition>
-            </Grid.RowDefinitions>
-            <CheckBox Content="Check all" VerticalAlignment="Bottom" Margin="15 10"></CheckBox>
-            <DockPanel Grid.Column="2">
-                <Button Content="Đã liên lạc được" DockPanel.Dock="Right" Margin="0 0 20 0" Padding="20 10" Height="50" HorizontalAlignment="Right" ></Button>
-            </DockPanel>
-            <DockPanel Grid.Column="1">
-                <Button Content="Tạo nội dung Email" DockPanel.Dock="Right" Command="{Binding CreateMailCommand}"  Padding="20 10" Height="50" HorizontalAlignment="Right" ></Button>
-                <Button Content="Gửi Email" Padding="20 10" DockPanel.Dock="Right" Width="92" Height="50"/>
-            </DockPanel>
-        </Grid>
-        <ListView ItemsSource="{Binding ListCandidate}" Grid.ColumnSpan="2" Height="569" Width="1505" HorizontalAlignment="Left">
-            <ListView.View>
-                <GridView x:Name="Candidates">
-                    <GridViewColumn Width="50">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsChecked}"></CheckBox>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="ID" Width="50">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding SortNumber}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Chức danh" Width="120">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Position.Name}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Vị trí" Width="100">
+    <Canvas>
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Title.Name}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Họ tên" Width="100">
+        <StackPanel IsEnabled="{Binding EnableListEmail}" Width="1366">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="270"></ColumnDefinition>
+                    <ColumnDefinition Width="170"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="150"></RowDefinition>
+                </Grid.RowDefinitions>
+                <CheckBox Content="Check all" IsChecked="{Binding CheckAll}" VerticalAlignment="Bottom" Margin="15 10" Command="{Binding CheckCandidateCommand}"></CheckBox>
+                <DockPanel Grid.Column="2">
+                    <Button Content="Đã liên lạc được" DockPanel.Dock="Right" Margin="0 0 20 0" Padding="20 10" Height="50" HorizontalAlignment="Right" ></Button>
+                </DockPanel>
+                <DockPanel Grid.Column="1">
+                    <Button Content="Tạo nội dung Email" DockPanel.Dock="Right" Command="{Binding CreateMailCommand}"  Padding="20 10" Height="50" HorizontalAlignment="Right" ></Button>
+                    <Button Content="Gửi Email" Command="{Binding SendMailCommand}" Padding="20 10" DockPanel.Dock="Right" Width="92" Height="50"/>
+                </DockPanel>
+            </Grid>
+            <ListView ItemsSource="{Binding ListCandidate}" Grid.ColumnSpan="2" Height="569" Width="1343" HorizontalAlignment="Left">
+                <ListView.View>
+                    <GridView x:Name="Candidates">
+                        <GridViewColumn Width="50">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsChecked}"></CheckBox>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="ID" Width="50">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding SortNumber}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Chức danh" Width="120">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Position.Name}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Vị trí" Width="100">
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding FullName}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Số điện thoại" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Title.Name}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Họ tên" Width="100">
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Phone}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Email" Width="200">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding FullName}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Số điện thoại" Width="100">
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Email}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Liên hệ được?" Width="120">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Phone}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Email" Width="200">
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Candidate_Email.Contactable_Status}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Thời gian phỏng vấn" Width="120">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Email}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Liên hệ được?" Width="120">
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Candidate_Email.InterviewTime}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Địa điểm phỏng vấn" Width="150">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate_Email.Contactable_Status}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Thời gian phỏng vấn" Width="120">
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Candidate_Email.InterviewLocation}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Note" Width="150">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate_Email.InterviewTime}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Địa điểm phỏng vấn" Width="150">
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Candidate_Email.InterviewLocation}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Trạng thái" Width="120">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate_Email.InterviewLocation}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Note" Width="150">
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Candidate_Email.StatusName}"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Hành động" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate_Email.InterviewLocation}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Trạng thái" Width="120">
 
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Content="Preview"></Button>
-                                    <Button Content="Sửa"></Button>
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
-    </StackPanel>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate_Email.StatusName}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Hành động" Width="100">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Preview" Command="{Binding ViewEmail}" Visibility="{Binding IsViewMail}"></Button>
+                                        <Button Content="Sửa"></Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </StackPanel>
+        <Border Canvas.Top="150" Canvas.Left="450" Width="463" BorderBrush="Gray" BorderThickness="1" Background="White" Visibility="{Binding ShowPopEmail}">
+            <StackPanel >
+                <TextBlock Text="Tiêu đề:" Margin="20 5"></TextBlock>
+                <TextBox Margin="20 10" Text="{Binding TitleEmail}" IsEnabled="{Binding EnableInputEmail}"></TextBox>
+                <TextBlock Text="Nội dung:" Margin="20 5"></TextBlock>
+                <RichTextBox Height="278" Margin="20 10" IsEnabled="{Binding EnableInputEmail}">
+                    <FlowDocument>
+                        <Paragraph>
+                            <Run Text="{Binding ContentEmail}"></Run>
+                        </Paragraph>
+                    </FlowDocument>
+                </RichTextBox>
+                <StackPanel Orientation="Horizontal" Margin="20 5">
+                    <TextBox Text="{Binding AttachmentName}" Width="350"></TextBox>
+                    <Button Content="Chọn file" Command="{Binding ChooseAttachmentCommand}"></Button>
+                </StackPanel>
+                <Canvas Height="35">
+                    <Button Content="OK" Width="50" Margin="0 10" Command="{Binding ConfirmMailCommand}" Visibility="{Binding ShowConfirmEmail}" Canvas.Left="206"></Button>
+                    <Button Content="OK" Width="50" Margin="0 10" Command="{Binding UpdateMailCommand}" Visibility="{Binding ShowUpdateEmail}" Canvas.Left="206"></Button>
+                </Canvas>
+                <Button Content="Hủy" Width="50" Margin="0 10" Command="{Binding ExitMailCommand}"></Button>
+            </StackPanel>
+        </Border>
+    </Canvas>
 </Window>

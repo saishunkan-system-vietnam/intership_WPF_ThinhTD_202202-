@@ -1,10 +1,5 @@
-﻿using DevExpress.Xpf.PdfViewer;
-using Services;
-using Syncfusion.Pdf.Parsing;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,16 +15,11 @@ using System.Windows.Shapes;
 namespace View
 {
     /// <summary>
-    /// Interaction logic for popViewCV.xaml
+    /// Interaction logic for frmTaskInterview.xaml
     /// </summary>
-    public partial class popViewCV : Window
+    public partial class frmTaskInterview : Window
     {
-        public popViewCV()
-        {
-            
-            InitializeComponent();
-        }
-        public popViewCV(string cvFileName)
+        public frmTaskInterview()
         {
             InitializeComponent();
         }

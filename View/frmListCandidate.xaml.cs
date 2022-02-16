@@ -23,5 +23,10 @@ namespace View
         {
             InitializeComponent();
         }
+
+        private void PdfDocumentView_DocumentLoaded(object sender, EventArgs args)
+        {
+
+        }
     }
 }

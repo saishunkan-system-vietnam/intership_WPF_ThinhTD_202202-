@@ -6,18 +6,12 @@
         xmlns:local="clr-namespace:View" xmlns:PdfViewer="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF"
         mc:Ignorable="d"
         xmlns:ViewModel="clr-namespace:View.ViewModel"
-        Title="frmListCandidate_Apply"  Height="769" Width="1400">
+        Title="frmListCandidate_Apply"  Height="760" Width="1366" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <ViewModel:ViewModelBase></ViewModel:ViewModelBase>
     </Window.DataContext>
     <Canvas>
-        <Canvas Background="White" Visibility="{Binding StatusButton}" Width="1400">
-            <PdfViewer:PdfDocumentView ItemSource="{Binding SourceCV}" Width="1381" Height="704" Canvas.Top="30"/>
-            <Button Command="{Binding CloseWPFCommand}" BorderBrush="White" Height="30" Width="30" Padding="0" Background="White" Canvas.Left="3">
-                <Image Source="/backIcon.png" Height="30" Width="30"></Image>
-            </Button>
-        </Canvas>
-        <StackPanel Visibility="{Binding ShowList}" Height="753" Width="1400">
+        <StackPanel Height="744" Width="1366"  IsEnabled="{Binding EnableListCandidate}" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"></ColumnDefinition>
@@ -62,17 +56,17 @@
                     <Button Content="Đặt lại" Height="30"  Padding="15 0" Command="{Binding ResetTableCommand}"></Button>
                 </StackPanel>
             </Grid>
-            <ListView ItemsSource="{Binding ListCandidate}" Height="566" Width="1398">
+            <ListView ItemsSource="{Binding ListCandidate}" Height="566" Width="1344" HorizontalAlignment="Left">
                 <ListView.View>
                     <GridView x:Name="Candidates">
                         <GridViewColumn Header="STT" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock/>
+                                    <TextBlock Text="{Binding SortNumber}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Họ tên" Width="120">
+                        <GridViewColumn Header="Họ tên" Width="200">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding FullName}"/>
@@ -99,7 +93,7 @@
 
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding BirthDay}"/>
+                                    <TextBlock Text="{Binding Path=BirthDay, StringFormat='dd/MM/yyyy'}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -140,13 +134,13 @@
                                         </Button>
                                         <StackPanel Orientation="Horizontal" Visibility="{Binding IsAction}">
                                             <Button BorderBrush="White" Height="35" Width="35" Padding="0" Background="White" Command="{Binding Save}">
-                                                <Image Source="/Images/download-icon-gif-11.jpg" Height="30" Width="30" />
+                                                <Image Source="/download-icon-gif-11.jpg" Height="30" Width="30" />
                                             </Button>
                                             <Button BorderBrush="White" Height="35" Width="35" Padding="0" Background="White" Command="{Binding Accept}">
-                                                <Image Source="/Images/474-4748228_tick-logo-png-tick-mark-with-circle-icon.png" Height="30" Width="30" />
+                                                <Image Source="/474-4748228_tick-logo-png-tick-mark-with-circle-icon.png" Height="30" Width="30" />
                                             </Button>
                                             <Button BorderBrush="White" Height="35" Width="35" Padding="0" Background="White" Command="{Binding Remove}">
-                                                <Image Source="/Images/download.png" Height="33" Width="33" />
+                                                <Image Source="/download.png" Height="33" Width="33" />
                                             </Button>
                                         </StackPanel>
                                     </Canvas>
@@ -157,5 +151,35 @@
                 </ListView.View>
             </ListView>
         </StackPanel>
+        <Border Canvas.Top="20" Canvas.Left="220" Width="900" BorderBrush="Gray" BorderThickness="1" Background="White" Visibility="{Binding StatusButton}" >
+            <StackPanel Background="White">
+                <TextBlock Padding="15 5" Foreground="white" Text="{Binding ViewCVTitle}" FontSize="14" FontWeight="Bold" Background="CadetBlue" Margin="0 0 0 10">
+                </TextBlock>
+                <PdfViewer:PdfDocumentView ItemSource="{Binding SourceCV}" Width="900" Height="590" Canvas.Top="30"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Duyệt" IsEnabled="{Binding AcceptButton}" Command="{Binding Candidate.Accept}" BorderBrush="CadetBlue" Padding="5" Width="60" Background="CadetBlue" Canvas.Left="3" HorizontalAlignment="Right" Margin="20 10" Foreground="White">
+                    </Button>
+                    <Button Content="Loại" IsEnabled="{Binding RemoveButton}" Command="{Binding Candidate.Remove}" BorderBrush="#FFD0825D" Padding="5" Width="60" Background="#FFD0825D" Canvas.Left="3" HorizontalAlignment="Right" Margin="0 10" Foreground="White">
+                    </Button>
+                    <Button Content="Quay lại" Command="{Binding ClosePDFCommand}" BorderBrush="#FFD05D5D" Padding="5" Width="60" Background="#FFD05D5D" Canvas.Left="3" HorizontalAlignment="Right" Margin="20 10" Foreground="White">
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border Canvas.Top="160" Canvas.Left="540" Width="250" BorderBrush="Gray" BorderThickness="1" Background="White" Visibility="{Binding ShowNote}">
+            <StackPanel>
+                <TextBlock Padding="15 5" Foreground="white" Text="Ghi chú" FontSize="14" FontWeight="Bold" Background="CadetBlue" Margin="0 0 0 10">
+                </TextBlock>
+                <RichTextBox Height="220" Width="213" Margin=" 0 10 0 0" >
+                    <FlowDocument>
+                        <Paragraph>
+                            <Run Text="{Binding Note}"></Run>
+                        </Paragraph>
+                    </FlowDocument>
+                </RichTextBox>
+                <Button Content="Save" Margin="5 10" Width="213" Command="{Binding SaveNoteCommand}"></Button>
+                <Button Content="Cancel" Margin="5 0 5 20" Width="213" Command="{Binding CancelNoteCommand}"></Button>
+            </StackPanel>
+        </Border>
     </Canvas>
 </Window>

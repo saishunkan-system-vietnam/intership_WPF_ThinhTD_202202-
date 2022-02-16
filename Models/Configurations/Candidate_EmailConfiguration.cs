@@ -22,6 +22,16 @@ namespace Models.Configurations
                 .IsRequired(false);
             builder.Property(x => x.Note)
                 .IsRequired(false);
+            builder.Property(x => x.InterviewLocation)
+                .IsRequired(false);
+            builder.Property(x => x.TestPoint)
+                .IsRequired(false);
+            builder.Property(x => x.InterviewTime)
+                .IsRequired(false);
+            builder.Property(x => x.Attachment)
+                .IsRequired(false);
+            builder.Property(x => x.Attachment_Name)
+                .IsRequired(false);
         }
 
     }
