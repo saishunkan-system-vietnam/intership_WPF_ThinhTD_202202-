@@ -4,9 +4,198 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
+        xmlns:viewModel="clr-namespace:View.ViewModel"
         mc:Ignorable="d"
-        Title="frmTaskInterview" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="frmTaskInterview" Height="760" Width="1366" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+    <viewModel:ViewModelBase></viewModel:ViewModelBase>
+    </Window.DataContext>
+    <Canvas>
+
+        <StackPanel IsEnabled="{Binding EnableListEmail}" Width="1356">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="270"></ColumnDefinition>
+                    <ColumnDefinition Width="170"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="150"></RowDefinition>
+                </Grid.RowDefinitions>
+                <CheckBox Content="Check all" IsChecked="{Binding CheckAll}" VerticalAlignment="Bottom" Margin="15 10" Command="{Binding CheckCandidateCommand}"></CheckBox>
+                <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
+                    <Button Content="Đã liên lạc được" Margin="0 0 20 0" Padding="20 10" Height="50" HorizontalAlignment="Right" ></Button>
+                    <ComboBox  Height="30"  Margin="10 10 20 10" ItemsSource="{Binding SortInterView}"
+                              DisplayMemberPath="Name" SelectedValuePath="Status" SelectedValue="{Binding Status}"></ComboBox>
+                </StackPanel>
+                <DockPanel Grid.Column="1">
+                    <Button Content="Tạo nội dung Email" DockPanel.Dock="Right" Command="{Binding CreateMailCommand}"  Padding="20 10" Height="50" HorizontalAlignment="Right" ></Button>
+                    <Button Content="Gửi Email" Command="{Binding SendMailCommand}" Padding="20 10" DockPanel.Dock="Right" Width="92" Height="50"/>
+                </DockPanel>
+            </Grid>
+            <ListView IsEnabled="{Binding EnableListCandidate}" ItemsSource="{Binding ListCA}" Grid.ColumnSpan="2" Height="569" Width="1330" HorizontalAlignment="Left">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="ID" Width="50">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding SortNumber}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Chức danh" Width="120">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate.Position.Name}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Vị trí" Width="100">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate.Title.Name}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Họ tên" Width="100">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate.FullName}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Số điện thoại" Width="100">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate.Phone}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Email" Width="200">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Candidate.Email}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Liên hệ được?" Width="120">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding GetInterView.Contactable_Name}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Thời gian phỏng vấn" Width="120">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding GetInterView.InterviewTime}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Địa điểm phỏng vấn" Width="150">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding GetInterView.InterviewLocation}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Note" Width="150">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding GetInterView.Note}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Trạng thái" Width="120">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding GetInterView.Status_Name}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Hành động" Width="200">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Preview" Command="{Binding ViewEmail}" IsEnabled="{Binding Preview}"></Button>
+                                        <Button Content="Thêm lịch" Command="{Binding AddInterview}"></Button>
+                                        <Button Content="Sửa lịch" Command="{Binding EditInterview}"></Button>
+                                        <Button Content="Xóa lịch" Command="{Binding DeleteInterview}"></Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </StackPanel>
+        <Border Canvas.Top="100" Canvas.Left="450" Width="463" BorderBrush="Gray" BorderThickness="1" Background="White" Visibility="{Binding ShowPopEmail}">
+            <StackPanel >
+                <TextBlock Text="Tiêu đề:" Margin="20 5"></TextBlock>
+                <TextBox Margin="20 10" Text="{Binding TitleEmail}" IsEnabled="{Binding EnableInputEmail}"></TextBox>
+                <TextBlock Text="Nội dung:" Margin="20 5"></TextBlock>
+                <RichTextBox Height="278" Margin="20 10" IsEnabled="{Binding EnableInputEmail}">
+                    <FlowDocument>
+                        <Paragraph>
+                            <Run Text="{Binding ContentEmail}"></Run>
+                        </Paragraph>
+                    </FlowDocument>
+                </RichTextBox>
+                <StackPanel Orientation="Horizontal" Margin="20 5">
+                    <TextBox IsEnabled="{Binding EnableInputEmail}" Text="{Binding AttachmentName}" Width="350"></TextBox>
+                    <Button IsEnabled="{Binding EnableInputEmail}" Content="Chọn file"  Command="{Binding ChooseAttachmentCommand}"></Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Canvas Height="35" Width="80" Margin="0 0 10 0">
+                        <Button Content="OK" Height="35" Width="80" Command="{Binding ConfirmMailCommand}" Visibility="{Binding ShowConfirmEmail}"></Button>
+                        <Button Content="OK" Height="35" Width="80"  Command="{Binding UpdateMailCommand}" Visibility="{Binding ShowUpdateEmail}"></Button>
+                    </Canvas>
+                    <Button Command="{Binding EnableUpdateMailCommand}" IsEnabled="{Binding EnableUpdateMail}"  Content="Chỉnh sửa" Height="35" Width="80"></Button>
+                </StackPanel>
+                <Button Content="Hủy" Width="50" Margin="0 10" Command="{Binding ExitMailCommand}"></Button>
+            </StackPanel>
+        </Border>
+        <Border Canvas.Top="150" Canvas.Left="430" Width="450" BorderBrush="Gray" BorderThickness="1" Background="White" Visibility="{Binding ShowPopInterview}">
+            <StackPanel>
+                <TextBlock Padding="15 5" Foreground="white" Text="{Binding TitlePopInterview}" FontSize="14" FontWeight="Bold" Background="CadetBlue" Margin="0 0 0 10">
+                </TextBlock>
+
+                <StackPanel>
+                    <TextBlock Margin="10,0" Text="Thời gian"></TextBlock>
+                    <DatePicker Height="30" Margin="10" SelectedDate="{Binding Interview.InterviewTime}" ></DatePicker>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Địa điểm" Margin="10,0"></TextBlock>
+                    <TextBox Height="30" Margin="10" Text="{Binding Interview.InterviewLocation}"></TextBox>
+                </StackPanel>
+                <StackPanel >
+                    <TextBlock Text="Phòng họp" Margin="10,0"></TextBlock>
+                    <TextBox Height="30" Margin="10" Text="{Binding Interview.MeetingRoom}"></TextBox></StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Address" Margin="10,0"></TextBlock>
+                    <ListBox Height="100" Margin="10" ItemsSource="{Binding ListEmployee}">
+                        <ListBox.ItemTemplate>
+                            <HierarchicalDataTemplate>
+                                <CheckBox Content="{Binding FullName}"></CheckBox>
+                            </HierarchicalDataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Margin="10" Content="{Binding ButtonContent}" Width="100" Height="40" Background="CadetBlue" Foreground="White" Command="{Binding SaveCommand}"></Button>
+                    <Button Content="Hủy" Width="100" Height="40" Background="#FFD26B79" Foreground="White" Command="{Binding ExitPopInterView}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Canvas>
 </Window>

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DBContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220216044329_updateC_ETable")]
-    partial class updateC_ETable
+    [Migration("20220217025149_update_db3")]
+    partial class update_db3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -86,21 +86,77 @@ namespace DBContext.Migrations
                     b.Property<int>("CandidateId")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("Attachment")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Attachment_Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContentEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsAccept")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("CandidateId");
 
                     b.ToTable("Candidate_Apply");
                 });
 
-            modelBuilder.Entity("Models.Entities.Candidate_Email", b =>
+            modelBuilder.Entity("Models.Entities.Employee", b =>
                 {
-                    b.Property<int>("CandidateID")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("BirthDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("varchar(12)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("Models.Entities.Interview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<byte[]>("Attachment")
                         .HasColumnType("varbinary(max)");
@@ -108,17 +164,20 @@ namespace DBContext.Migrations
                     b.Property<string>("Attachment_Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Candidate_ApplyId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Contactable")
                         .HasColumnType("int");
 
                     b.Property<string>("ContentEmail")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InterviewLocation")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("InterviewTime")
+                    b.Property<DateTime>("InterviewTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
@@ -131,12 +190,36 @@ namespace DBContext.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("CandidateID");
+                    b.HasKey("Id");
 
-                    b.ToTable("Candidate_Email");
+                    b.HasIndex("Candidate_ApplyId");
+
+                    b.ToTable("Interview");
+                });
+
+            modelBuilder.Entity("Models.Entities.Interview_Employee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InterViewId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("InterViewId");
+
+                    b.ToTable("interview_Employee");
                 });
 
             modelBuilder.Entity("Models.Entities.Position", b =>
@@ -228,24 +311,55 @@ namespace DBContext.Migrations
                     b.Navigation("Candidate");
                 });
 
-            modelBuilder.Entity("Models.Entities.Candidate_Email", b =>
+            modelBuilder.Entity("Models.Entities.Interview", b =>
                 {
-                    b.HasOne("Models.Entities.Candidate", "Candidate")
-                        .WithOne("Candidate_Email")
-                        .HasForeignKey("Models.Entities.Candidate_Email", "CandidateID")
+                    b.HasOne("Models.Entities.Candidate_Apply", "Candidate_Apply")
+                        .WithMany("Interview")
+                        .HasForeignKey("Candidate_ApplyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Candidate");
+                    b.Navigation("Candidate_Apply");
+                });
+
+            modelBuilder.Entity("Models.Entities.Interview_Employee", b =>
+                {
+                    b.HasOne("Models.Entities.Employee", "Employee")
+                        .WithMany("Interview_Employee")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Entities.Interview", "Interview")
+                        .WithMany("Interview_Employee")
+                        .HasForeignKey("InterViewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Interview");
                 });
 
             modelBuilder.Entity("Models.Entities.Candidate", b =>
                 {
                     b.Navigation("CandiDate_Apply")
                         .IsRequired();
+                });
 
-                    b.Navigation("Candidate_Email")
-                        .IsRequired();
+            modelBuilder.Entity("Models.Entities.Candidate_Apply", b =>
+                {
+                    b.Navigation("Interview");
+                });
+
+            modelBuilder.Entity("Models.Entities.Employee", b =>
+                {
+                    b.Navigation("Interview_Employee");
+                });
+
+            modelBuilder.Entity("Models.Entities.Interview", b =>
+                {
+                    b.Navigation("Interview_Employee");
                 });
 
             modelBuilder.Entity("Models.Entities.Position", b =>

@@ -9,28 +9,33 @@ using System.Threading.Tasks;
 
 namespace Models.Configurations
 {
-    public class Candidate_EmailConfiguration : IEntityTypeConfiguration<Candidate_Email>
+    public class InterviewConfiguration : IEntityTypeConfiguration<Interview>
     {
-        public void Configure(EntityTypeBuilder<Candidate_Email> builder)
+        public void Configure(EntityTypeBuilder<Interview> builder)
         {
-            builder.HasKey(x => x.CandidateID);
-            builder.HasOne(x => x.Candidate)
-                .WithOne(x => x.Candidate_Email);
+            builder.HasKey(x => x.Id);
+            builder.HasOne(x => x.Candidate_Apply)
+                .WithMany(x => x.Interview)
+                .HasForeignKey(x => x.Candidate_ApplyId);
             builder.Property(x => x.Status)
                 .IsRequired(false);
             builder.Property(x => x.Contactable)
                 .IsRequired(false);
             builder.Property(x => x.Note)
                 .IsRequired(false);
-            builder.Property(x => x.InterviewLocation)
+            builder.Property(x => x.InterviewLocation);
+            builder.Property(x => x.IsPass)
                 .IsRequired(false);
-            builder.Property(x => x.TestPoint)
-                .IsRequired(false);
-            builder.Property(x => x.InterviewTime)
-                .IsRequired(false);
+            builder.Property(x => x.InterviewTime);
             builder.Property(x => x.Attachment)
                 .IsRequired(false);
             builder.Property(x => x.Attachment_Name)
+                .IsRequired(false);
+            builder.Property(x => x.Title)
+                .IsRequired(false);
+            builder.Property(x => x.ContentEmail)
+                .IsRequired(false);
+            builder.Property(x => x.MeetingRoom)
                 .IsRequired(false);
         }
 

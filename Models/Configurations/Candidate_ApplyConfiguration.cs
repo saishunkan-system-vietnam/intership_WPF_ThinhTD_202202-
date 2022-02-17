@@ -20,6 +20,18 @@ namespace Models.Configurations
                 .IsRequired(false);
             builder.Property(x => x.Note)
                 .IsRequired(false);
+            builder.Property(x => x.Attachment)
+                .IsRequired(false);
+            builder.Property(x => x.Attachment_Name)
+                .IsRequired(false);
+            builder.Property(x => x.Title)
+                .IsRequired(false);
+            builder.Property(x => x.ContentEmail)
+                .IsRequired(false);
+            builder.Property(x => x.IsAccept)
+                .IsRequired(false);
+            builder.Property(x => x.TestPoint)
+                .IsRequired(false);
         }
 
     }
