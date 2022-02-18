@@ -23,7 +23,8 @@ namespace Models.Configurations
                 .IsRequired(false);
             builder.Property(x => x.Note)
                 .IsRequired(false);
-            builder.Property(x => x.InterviewLocation);
+            builder.Property(x => x.InterviewLocation)
+                .IsRequired(false);
             builder.Property(x => x.IsPass)
                 .IsRequired(false);
             builder.Property(x => x.InterviewTime);

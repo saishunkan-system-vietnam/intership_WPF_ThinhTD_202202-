@@ -18,9 +18,9 @@ namespace View.ViewModel
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         private AppDbContext db = null;
-        int candidateID;
+        int candidateID, candidateApplyId, oldStatus;
         private byte[] fileCV, attachment;
-        private bool isAdd { get; set; }
+        private bool isAdd, isCheckInterview;
         public Candidate candidateItem { get; set; }
         private Candidate candidate;
         public Candidate Candidate
@@ -37,7 +37,8 @@ namespace View.ViewModel
         public Candidate_Apply CandidateApply
         {
             get { return candidateApply; }
-            set { 
+            set
+            {
                 candidateApply = value;
                 OnPropertyChanged("CandidateApply");
             }
@@ -51,6 +52,17 @@ namespace View.ViewModel
             {
                 buttonContent = value;
                 OnPropertyChanged("ButtonContent");
+            }
+        }
+
+        private string buttonInterviewContent;
+        public string ButtonInterviewContent
+        {
+            get { return buttonInterviewContent; }
+            set
+            {
+                buttonInterviewContent = value;
+                OnPropertyChanged("ButtonInterviewContent");
             }
         }
         private string viewCVTitle;
@@ -73,6 +85,16 @@ namespace View.ViewModel
                 OnPropertyChanged("TitlePopSave");
             }
         }
+        private string noteRefuse;
+        public string NoteRefuse
+        {
+            get { return noteRefuse; }
+            set
+            {
+                noteRefuse = value;
+                OnPropertyChanged("NoteRefuse");
+            }
+        }
         private string titlePopInterview;
         public string TitlePopInterview
         {
@@ -91,6 +113,7 @@ namespace View.ViewModel
             {
                 status = value;
                 OnPropertyChanged("Status");
+                LoadListTask(Status);
             }
         }
         private string titleEmail;
@@ -158,7 +181,8 @@ namespace View.ViewModel
         public Interview Interview
         {
             get { return interview; }
-            set { 
+            set
+            {
                 interview = value;
                 OnPropertyChanged("InterView");
             }
@@ -207,7 +231,7 @@ namespace View.ViewModel
                 OnPropertyChanged("ListPosition");
             }
         }
-        
+
         private List<Candidate_Apply> listCA;
 
         public List<Candidate_Apply> ListCA
@@ -333,6 +357,18 @@ namespace View.ViewModel
             }
         }
 
+        private int testPoint;
+
+        public int TestPoint
+        {
+            get { return testPoint; }
+            set
+            {
+                testPoint = value;
+                OnPropertyChanged("TestPoint");
+            }
+        }
+
         private string fileName;
 
         public string FileName
@@ -349,7 +385,8 @@ namespace View.ViewModel
         public MemoryStream SourceCV
         {
             get { return sourceCV; }
-            set { 
+            set
+            {
                 sourceCV = value;
                 OnPropertyChanged("SourceCV");
             }
@@ -359,7 +396,8 @@ namespace View.ViewModel
         public bool EnableListEmail
         {
             get { return enableListEmail; }
-            set { 
+            set
+            {
                 enableListEmail = value;
                 OnPropertyChanged("EnableListEmail");
             }
@@ -369,7 +407,8 @@ namespace View.ViewModel
         public bool EnableUpdateMail
         {
             get { return enableUpdateMail; }
-            set {
+            set
+            {
                 enableUpdateMail = value;
                 OnPropertyChanged("EnableUpdateMail");
             }
@@ -379,7 +418,8 @@ namespace View.ViewModel
         public bool EnableListCandidate
         {
             get { return enableListCandidate; }
-            set {
+            set
+            {
                 enableListCandidate = value;
                 OnPropertyChanged("EnableListCandidate");
             }
@@ -389,7 +429,8 @@ namespace View.ViewModel
         public bool AcceptButton
         {
             get { return acceptButton; }
-            set {
+            set
+            {
                 acceptButton = value;
                 OnPropertyChanged("AcceptButton");
             }
@@ -399,19 +440,54 @@ namespace View.ViewModel
         public bool RemoveButton
         {
             get { return removeButton; }
-            set {
+            set
+            {
                 removeButton = value;
                 OnPropertyChanged("RemoveButton");
             }
         }
+        private bool enableCheckTask;
+
+        public bool EnableCheckTask
+        {
+            get { return enableCheckTask; }
+            set {
+                enableCheckTask = value;
+                OnPropertyChanged("EnableCheckTask");
+            }
+        }
+
+
         private bool checkAll;
 
         public bool CheckAll
         {
             get { return checkAll; }
-            set {
+            set
+            {
                 checkAll = value;
                 OnPropertyChanged("CheckAll");
+                LoadListCA();
+                foreach (Candidate_Apply item in Candidate_Applies)
+                {
+                    item.IsChecked = checkAll;
+                }
+            }
+        }
+        private bool checkAllTask;
+
+        public bool CheckAllTask
+        {
+            get { return checkAllTask; }
+            set
+            {
+                checkAllTask = value;
+                OnPropertyChanged("CheckAllTask");
+                LoadListCA();
+                foreach (Candidate_Apply item in ListCA)
+                {
+                    item.IsChecked = checkAllTask;
+                }
             }
         }
         private bool enableInputEmail;
@@ -419,7 +495,8 @@ namespace View.ViewModel
         public bool EnableInputEmail
         {
             get { return enableInputEmail; }
-            set {
+            set
+            {
                 enableInputEmail = value;
                 OnPropertyChanged("EnableInputEmail");
             }
@@ -429,9 +506,21 @@ namespace View.ViewModel
         public Visibility ShowNote
         {
             get { return showNote; }
-            set {
+            set
+            {
                 showNote = value;
                 OnPropertyChanged("ShowNote");
+            }
+        }
+        private Visibility showPopPoint;
+
+        public Visibility ShowPopPoint
+        {
+            get { return showPopPoint; }
+            set
+            {
+                showPopPoint = value;
+                OnPropertyChanged("ShowPopPoint");
             }
         }
         private string attachmentName;
@@ -439,7 +528,8 @@ namespace View.ViewModel
         public string AttachmentName
         {
             get { return attachmentName; }
-            set { 
+            set
+            {
                 attachmentName = value;
                 OnPropertyChanged("AttachmentName");
             }
@@ -453,17 +543,20 @@ namespace View.ViewModel
         {
             enableListCandidate = enableListEmail = isAdd = true;
             enableInputEmail = false;
-            showPopInterview = showNote = showAddCandidate = showConfirmEmail = showUpdateEmail = showPopEmail = statusButton = Visibility.Hidden;
+            showPopPoint = showPopInterview = showNote = showAddCandidate = showConfirmEmail = showUpdateEmail = showPopEmail = statusButton = Visibility.Hidden;
             db = new AppDbContext();
             LoadCandidate();
             LoadListCA();
+            LoadListEmployee();
             listTitle = db.Titles.ToList();
             listPosition = db.Position.ToList();
             listPresenter = db.Presenter.ToList();
-            listEmployee = db.Employee.ToList();
             titleID = presenterID = positionID = 1;
         }
-
+        private void LoadListEmployee()
+        {
+            ListEmployee = db.Employee.ToList();
+        }
         private RelayCommand _saveCommand;
 
         public RelayCommand SaveCommand
@@ -517,6 +610,72 @@ namespace View.ViewModel
                     }));
             }
         }
+
+        private RelayCommand _saveInterviewCommand;
+
+        public RelayCommand SaveInterviewCommand
+        {
+            get
+            {
+                return _saveInterviewCommand ??
+                    (_saveInterviewCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            if (isCheckInterview == true)
+                            {
+                                Interview.Candidate_ApplyId = candidateApplyId;
+                                Interview.Status = oldStatus + 1;
+                                db.Interview.Add(Interview);
+                                List<Interview> interviews = db.Interview.ToList();
+                                Interview _interview = interviews[interviews.Count - 1];
+                                foreach (var item in listEmployee)
+                                {
+                                    if (item.IsChecked)
+                                    {
+                                        Interview_Employee interview_Employee = new Interview_Employee();
+                                        interview_Employee.EmployeeId = item.Id;
+                                        interview_Employee.InterViewId = _interview.Id;
+                                        db.interview_Employee.Add(interview_Employee);
+                                    }
+                                }
+                                db.SaveChanges();
+                            }
+                            else
+                            {
+                                db.Interview.Update(Interview);
+                                List<Interview_Employee> list = db.interview_Employee.Where(x => x.InterViewId.Equals(Interview.Id)).ToList();
+                                foreach (var itemIE in list)
+                                {
+                                    db.interview_Employee.Remove(itemIE);
+                                }
+                                foreach (var item in listEmployee)
+                                {
+                                    if (item.IsChecked)
+                                    {
+                                        Interview_Employee interview_Employee = new Interview_Employee();
+                                        interview_Employee.EmployeeId = item.Id;
+                                        interview_Employee.InterViewId = Interview.Id;
+                                        db.interview_Employee.Add(interview_Employee);
+                                    }
+                                }
+                                db.SaveChanges();
+                            }
+                            LoadCandidate();
+                            LoadListEmployee();
+                            LoadListTask(Status);
+                            EnableListCandidate = true;
+                            ShowPopInterview = Visibility.Hidden;
+                            Interview = null;
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }));
+            }
+        }
         private RelayCommand _chooseFileCommand;
 
         public RelayCommand ChooseFileCommand
@@ -534,6 +693,102 @@ namespace View.ViewModel
                                 FileName = openFileDialog.SafeFileName;
                                 fileCV = File.ReadAllBytes(openFileDialog.FileName);
                             }
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }));
+            }
+        }
+        private RelayCommand _okPointCommand;
+
+        public RelayCommand OkPointCommand
+        {
+            get
+            {
+                return _okPointCommand ??
+                    (_okPointCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            CandidateApply.TestPoint = TestPoint;
+                            MessageBox.Show(TestPoint.ToString());
+                            db.Candidate_Apply.Update(CandidateApply);
+                            db.SaveChanges();
+                            ShowPopPoint = Visibility.Hidden;
+                            EnableListEmail = true;
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }));
+            }
+        }
+        private RelayCommand _okNoteCommand;
+
+        public RelayCommand OkNoteCommand
+        {
+            get
+            {
+                return _okNoteCommand ??
+                    (_okNoteCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            CandidateApply.IsAccept = false;
+                            CandidateApply.Note = NoteRefuse;
+                            db.Candidate_Apply.Update(CandidateApply);
+                            db.SaveChanges();
+                            ShowNote = Visibility.Hidden;
+                            EnableListEmail = true;
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }));
+            }
+        }
+        private RelayCommand _exitPointCommand;
+
+        public RelayCommand ExitPointCommand
+        {
+            get
+            {
+                return _exitPointCommand ??
+                    (_exitPointCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            ShowPopPoint = Visibility.Hidden;
+                            enableListEmail = true;
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }));
+            }
+        }
+        private RelayCommand _exitNoteCommand;
+
+        public RelayCommand ExitNoteCommand
+        {
+            get
+            {
+                return _exitNoteCommand ??
+                    (_exitNoteCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            ShowNote = Visibility.Hidden;
+                            EnableListEmail = true;
                         }
                         catch (Exception)
                         {
@@ -565,7 +820,7 @@ namespace View.ViewModel
                     }));
             }
         }
-        
+
 
         private RelayCommand _chooseattachmentCommand;
 
@@ -645,6 +900,29 @@ namespace View.ViewModel
             }
         }
 
+        private RelayCommand _openCheckCVCommand;
+
+        public RelayCommand OpenCheckCVCommand
+        {
+            get
+            {
+                return _openCheckCVCommand ??
+                    (_openCheckCVCommand = new RelayCommand(p =>
+                    {
+                        try
+                        {
+                            frmListCandidate_Apply frmListCandidate_Apply = new frmListCandidate_Apply();
+                            frmListCandidate_Apply.Show();
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }));
+            }
+        }
+
         private RelayCommand _exitSaveCommand;
 
         public RelayCommand ExitSaveCommand
@@ -706,19 +984,132 @@ namespace View.ViewModel
                     {
                         try
                         {
-                            ListCandidate = db.Candidate.Where(x=>x.PositionId.Equals(positionID) && x.TitleID.Equals(titleID)).ToList();
-                            foreach (Candidate item in listCandidate)
+                            int i = 1;
+                            ListCandidate = db.Candidate.Where(x => x.PositionId.Equals(positionID) && x.TitleID.Equals(titleID)).ToList();
+                            foreach (Candidate item in ListCandidate)
                             {
+                                item.CandiDate_Apply = db.Candidate_Apply.FirstOrDefault(x => x.CandidateId.Equals(item.Id));
+                                item.SortNumber = i;
+                                i++;
+                                string[] str = item.CVFileName.Split('.');
+                                if (item.CandiDate_Apply != null)
+                                {
+                                    if (item.CandiDate_Apply.Status == 1)
+                                    {
+                                        item.AcceptButton = true;
+                                        item.RemoveButton = false;
+                                    }
+                                    else
+                                    {
+                                        item.AcceptButton = false;
+                                        item.RemoveButton = true;
+                                    }
+                                }
+                                else
+                                {
+
+                                    item.AcceptButton = true;
+                                    item.RemoveButton = true;
+                                }
+                                if (str[1].ToLower().Equals("pdf"))
+                                {
+
+                                    item.IsAction = Visibility.Hidden;
+                                    item.IsView = Visibility.Visible;
+                                }
+                                else
+                                {
+                                    item.IsAction = Visibility.Visible;
+                                    item.IsView = Visibility.Hidden;
+                                }
                                 item.ViewCV = new RelayCommand(p => {
-                                    //popViewCV popViewCV = new popViewCV(item.CVFile);
-                                    //sourceCV = new FileStream(@"..\..\..\CVFiles\0092-adobe-photoshop-tutorial.pdf", FileMode.Open);
+
+                                    if (item.CandiDate_Apply != null)
+                                    {
+                                        if (item.CandiDate_Apply.Status == 1)
+                                        {
+                                            AcceptButton = true;
+                                            RemoveButton = false;
+                                        }
+                                        else
+                                        {
+                                            AcceptButton = false;
+                                            RemoveButton = true;
+                                        }
+                                    }
+                                    else
+                                    {
+
+                                        AcceptButton = true;
+                                        RemoveButton = true;
+                                    }
+                                    Candidate = item;
+                                    ViewCVTitle = "Xem cv ứng viên: " + item.FullName;
+                                    EnableListCandidate = false;
+                                    StatusButton = Visibility.Visible;
+                                    FileName = item.CVFileName;
+                                    SourceCV = new MemoryStream(item.CVFile);
+                                    CheckCv();
+                                });
+                                item.Edit = new RelayCommand(p => {
+                                    isAdd = false;
+                                    EnableListCandidate = false;
+                                    ShowAddCandidate = Visibility.Visible;
+                                    ButtonContent = "Save";
+                                    Candidate = item;
+                                    PresenterID = item.PresenterId;
+                                    PositionID = item.PositionId;
+                                    TitleID = item.TitleID;
+                                    FileName = item.CVFileName;
+                                    TitlePopSave = "Chỉnh sửa thông tin ứng viên";
                                 });
                                 item.Delete = new RelayCommand(p => {
                                     if (MessageBox.Show("Bạn có chắc chắn muốn xoá?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                                     {
                                         db.Candidate.Remove(item);
                                         db.SaveChanges();
-                                        ListCandidate.Remove(item);
+                                        LoadCandidate();
+                                    }
+                                });
+                                item.Save = new RelayCommand(p => {
+                                    SaveFileDialog saveFileDialog = new SaveFileDialog();
+                                    saveFileDialog.FileName = item.CVFileName;
+                                    saveFileDialog.Filter = "Pdf Files|*.pdf";
+                                    if (saveFileDialog.ShowDialog() == true)
+                                        File.WriteAllBytes(saveFileDialog.FileName, item.CVFile);
+                                });
+                                item.Accept = new RelayCommand(p =>
+                                {
+                                    Candidate_Apply candidate_Apply = db.Candidate_Apply.FirstOrDefault(x => x.CandidateId.Equals(item.Id));
+                                    if (candidate_Apply != null)
+                                    {
+                                        candidate_Apply.Status = 2;
+                                        db.Candidate_Apply.Update(candidate_Apply);
+                                        db.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        db.Candidate_Apply.Add(new Candidate_Apply(item.Id, 2, null, null, null, false, null, null));
+                                        db.SaveChanges();
+                                    }
+                                    MessageBox.Show("Accept thành công!");
+                                    LoadCandidate();
+                                });
+                                item.Remove = new RelayCommand(p =>
+                                {
+                                    candidateID = item.Id;
+                                    ShowNote = Visibility.Visible;
+                                    EnableListCandidate = false;
+                                });
+                                item.ChangeCheck = new RelayCommand(p =>
+                                {
+                                    if (item.IsChecked)
+                                    {
+                                        item.IsChecked = false;
+                                    }
+                                    else
+                                    {
+                                        item.IsChecked = true;
                                     }
                                 });
                             }
@@ -741,17 +1132,132 @@ namespace View.ViewModel
                     {
                         try
                         {
+                            int i = 1;
                             ListCandidate = db.Candidate.Where(x => x.FullName.Contains(keyWord) || x.Email.Contains(keyWord) || x.Address.Contains(keyWord) || x.Phone.Contains(keyWord)).ToList();
-                            foreach (Candidate item in listCandidate)
+                            foreach (Candidate item in ListCandidate)
                             {
+                                item.CandiDate_Apply = db.Candidate_Apply.FirstOrDefault(x => x.CandidateId.Equals(item.Id));
+                                item.SortNumber = i;
+                                i++;
+                                string[] str = item.CVFileName.Split('.');
+                                if (item.CandiDate_Apply != null)
+                                {
+                                    if (item.CandiDate_Apply.Status == 1)
+                                    {
+                                        item.AcceptButton = true;
+                                        item.RemoveButton = false;
+                                    }
+                                    else
+                                    {
+                                        item.AcceptButton = false;
+                                        item.RemoveButton = true;
+                                    }
+                                }
+                                else
+                                {
+
+                                    item.AcceptButton = true;
+                                    item.RemoveButton = true;
+                                }
+                                if (str[1].ToLower().Equals("pdf"))
+                                {
+
+                                    item.IsAction = Visibility.Hidden;
+                                    item.IsView = Visibility.Visible;
+                                }
+                                else
+                                {
+                                    item.IsAction = Visibility.Visible;
+                                    item.IsView = Visibility.Hidden;
+                                }
                                 item.ViewCV = new RelayCommand(p => {
+
+                                    if (item.CandiDate_Apply != null)
+                                    {
+                                        if (item.CandiDate_Apply.Status == 1)
+                                        {
+                                            AcceptButton = true;
+                                            RemoveButton = false;
+                                        }
+                                        else
+                                        {
+                                            AcceptButton = false;
+                                            RemoveButton = true;
+                                        }
+                                    }
+                                    else
+                                    {
+
+                                        AcceptButton = true;
+                                        RemoveButton = true;
+                                    }
+                                    Candidate = item;
+                                    ViewCVTitle = "Xem cv ứng viên: " + item.FullName;
+                                    EnableListCandidate = false;
+                                    StatusButton = Visibility.Visible;
+                                    FileName = item.CVFileName;
+                                    SourceCV = new MemoryStream(item.CVFile);
+                                    CheckCv();
+                                });
+                                item.Edit = new RelayCommand(p => {
+                                    isAdd = false;
+                                    EnableListCandidate = false;
+                                    ShowAddCandidate = Visibility.Visible;
+                                    ButtonContent = "Save";
+                                    Candidate = item;
+                                    PresenterID = item.PresenterId;
+                                    PositionID = item.PositionId;
+                                    TitleID = item.TitleID;
+                                    FileName = item.CVFileName;
+                                    TitlePopSave = "Chỉnh sửa thông tin ứng viên";
                                 });
                                 item.Delete = new RelayCommand(p => {
                                     if (MessageBox.Show("Bạn có chắc chắn muốn xoá?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                                     {
                                         db.Candidate.Remove(item);
                                         db.SaveChanges();
-                                        ListCandidate.Remove(item);
+                                        LoadCandidate();
+                                    }
+                                });
+                                item.Save = new RelayCommand(p => {
+                                    SaveFileDialog saveFileDialog = new SaveFileDialog();
+                                    saveFileDialog.FileName = item.CVFileName;
+                                    saveFileDialog.Filter = "Pdf Files|*.pdf";
+                                    if (saveFileDialog.ShowDialog() == true)
+                                        File.WriteAllBytes(saveFileDialog.FileName, item.CVFile);
+                                });
+                                item.Accept = new RelayCommand(p =>
+                                {
+                                    Candidate_Apply candidate_Apply = db.Candidate_Apply.FirstOrDefault(x => x.CandidateId.Equals(item.Id));
+                                    if (candidate_Apply != null)
+                                    {
+                                        candidate_Apply.Status = 2;
+                                        db.Candidate_Apply.Update(candidate_Apply);
+                                        db.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        db.Candidate_Apply.Add(new Candidate_Apply(item.Id, 2, null, null, null, false, null, null));
+                                        db.SaveChanges();
+                                    }
+                                    MessageBox.Show("Accept thành công!");
+                                    LoadCandidate();
+                                });
+                                item.Remove = new RelayCommand(p =>
+                                {
+                                    candidateID = item.Id;
+                                    ShowNote = Visibility.Visible;
+                                    EnableListCandidate = false;
+                                });
+                                item.ChangeCheck = new RelayCommand(p =>
+                                {
+                                    if (item.IsChecked)
+                                    {
+                                        item.IsChecked = false;
+                                    }
+                                    else
+                                    {
+                                        item.IsChecked = true;
                                     }
                                 });
                             }
@@ -908,7 +1414,7 @@ namespace View.ViewModel
             }
         }
 
-        
+
         private RelayCommand updateMailCommand;
         public RelayCommand UpdateMailCommand
         {
@@ -943,7 +1449,7 @@ namespace View.ViewModel
             }
         }
 
-        
+
         private RelayCommand sendMailCommand;
         public RelayCommand SendMailCommand
         {
@@ -958,8 +1464,12 @@ namespace View.ViewModel
                             {
                                 if (item.IsChecked == true)
                                 {
-                                    MemoryStream ms = new MemoryStream(item.Attachment);
-                                    Attachment attachment = new Attachment(ms, item.Attachment_Name);
+                                    Attachment attachment = null;
+                                    if (item.Attachment != null)
+                                    {
+                                        MemoryStream ms = new MemoryStream(item.Attachment);
+                                        attachment = new Attachment(ms, item.Attachment_Name);
+                                    }
                                     SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
                                     client.Credentials = new NetworkCredential("tt21052000@gmail.com", "T21052000@");
                                     client.EnableSsl = true;
@@ -971,9 +1481,13 @@ namespace View.ViewModel
                                     client.Host = "smtp.gmail.com";
                                     client.Send(message);
                                     client.Dispose();
+                                    Interview = new Interview();
+                                    Interview.Candidate_ApplyId = item.CandidateId;
+                                    Interview.Status = 3;
+                                    db.Interview.Add(Interview);
+                                    db.SaveChanges();
                                 }
                             }
-
                             MessageBox.Show("Gửi thành công", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                         catch (Exception)
@@ -983,7 +1497,7 @@ namespace View.ViewModel
                     }));
             }
         }
-        
+
         private RelayCommand exitMailCommand;
         public RelayCommand ExitMailCommand
         {
@@ -1006,32 +1520,6 @@ namespace View.ViewModel
                     }));
             }
         }
-        
-        private RelayCommand checkCandidateCommand;
-        public RelayCommand CheckCandidateCommand
-        {
-            get
-            {
-                return checkCandidateCommand ??
-                    (checkCandidateCommand = new RelayCommand(p =>
-                    {
-                        try
-                        {
-                            LoadListCA();
-                            foreach (Candidate_Apply item in Candidate_Applies)
-                            {
-                                item.IsChecked = CheckAll;
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            throw;
-                        }
-                    }));
-            }
-        }
-        
-        private RelayCommand acceptInterviewCommand;
 
         private void CheckCv()
         {
@@ -1154,12 +1642,12 @@ namespace View.ViewModel
                         LoadCandidate();
                     }
                 });
-                item.Save = new RelayCommand(p => { 
+                item.Save = new RelayCommand(p => {
                     SaveFileDialog saveFileDialog = new SaveFileDialog();
                     saveFileDialog.FileName = item.CVFileName;
                     saveFileDialog.Filter = "Pdf Files|*.pdf";
                     if (saveFileDialog.ShowDialog() == true)
-                        File.WriteAllBytes(saveFileDialog.FileName , item.CVFile);
+                        File.WriteAllBytes(saveFileDialog.FileName, item.CVFile);
                 });
                 item.Accept = new RelayCommand(p =>
                 {
@@ -1182,7 +1670,7 @@ namespace View.ViewModel
                 {
                     candidateID = item.Id;
                     ShowNote = Visibility.Visible;
-                    EnableListCandidate = false; 
+                    EnableListCandidate = false;
                 });
                 item.ChangeCheck = new RelayCommand(p =>
                 {
@@ -1201,52 +1689,16 @@ namespace View.ViewModel
         {
             status = 1;
             int i = 1;
-            ListCA = db.Candidate_Apply.Where(x => x.IsAccept == true).ToList();
             sortInterView = new List<SortType>();
             sortInterView.Add(new SortType(1, "Tất cả"));
-            sortInterView.Add(new SortType(6, "Pass V1"));
-            sortInterView.Add(new SortType(6, "Pass V1"));
-            sortInterView.Add(new SortType(8, "Pass V2"));
-            foreach (Candidate_Apply item in ListCA)
-            {
-                item.SortNumber = i;
-                i++;
-                item.Candidate = db.Candidate.FirstOrDefault(x => x.Id.Equals(item.CandidateId));
-                if (item.Interview != null)
-                {
-                    item.GetInterView = item.Interview[item.Interview.Count - 1];
-                }
-                if (item.Title != null || item.ContentEmail != null)
-                {
-                    item.Preview = true;
-                }
-                else
-                {
-                    item.Preview = false;
-                }
-                item.ViewEmail = new RelayCommand(p =>
-                {
-                    EnableUpdateMail = true;
-                    EnableListEmail = false;
-                    CandidateApply = item;
-                    ShowPopEmail = ShowUpdateEmail = Visibility.Visible;
-                    EnableInputEmail = false;
-                    TitleEmail = item.Title;
-                    ContentEmail = item.ContentEmail;
-                    AttachmentName = item.Attachment_Name;
-                });
-                item.AddInterview = new RelayCommand(p =>
-                {
-                    TitlePopInterview = "Thêm lịch phỏng vấn cho ứng viên: " + item.Candidate.FullName;
-                    ShowPopInterview = Visibility.Visible;
-                    EnableListCandidate = false;
-                    Interview = new Interview();
-                });
-            }
-            Candidate_Applies = db.Candidate_Apply.Where(x => x.Status.Equals(2) && x.IsAccept == null).ToList();
+            sortInterView.Add(new SortType(5, "Vòng 1"));
+            sortInterView.Add(new SortType(7, "Vòng 2"));
+            LoadListTask(Status);
+            Candidate_Applies = db.Candidate_Apply.Where(x => x.Status.Equals(2) && (x.IsAccept == null || x.IsAccept == false)).ToList();
             foreach (Candidate_Apply item in Candidate_Applies)
             {
                 item.Candidate = db.Candidate.FirstOrDefault(x => x.Id.Equals(item.CandidateId));
+                item.Interview = db.Interview.Where(x=>x.Candidate_ApplyId.Equals(item.CandidateId)).ToList();
                 item.SortNumber = i;
                 i++;
                 if (item.Title != null || item.ContentEmail != null)
@@ -1268,12 +1720,312 @@ namespace View.ViewModel
                     ContentEmail = item.ContentEmail;
                     AttachmentName = item.Attachment_Name;
                 });
-                item.AcceptInterView = new RelayCommand(p => { 
+                item.AcceptInterView = new RelayCommand(p => {
                     item.IsAccept = true;
                     db.Candidate_Apply.Update(item);
+                    Interview = item.Interview[0];
+                    Interview.Status = 4;
+                    db.Interview.Update(Interview);
                     db.SaveChanges();
                     LoadListCA();
                 });
+                item.AddPoint = new RelayCommand(p =>
+                {
+                    CandidateApply = item;
+                    TestPoint = 1;
+                    ShowPopPoint = Visibility.Visible;
+                    enableListEmail = false;
+                });
+                item.RefuseInterView = new RelayCommand(p =>
+                {
+                    CandidateApply = item;
+                    ShowNote = Visibility.Visible;
+                    EnableListEmail = false;
+                });
+                if (item.Interview != null)
+                    item.enablePointButton = true;
+                else
+                    item.enablePointButton = false;
+            }
+        }
+        private void LoadListTask(int status)
+        {
+            int i = 1;
+            if (status == 1)
+            {
+                
+                ListCA = db.Candidate_Apply.Where(x => x.IsAccept == true).ToList();
+                foreach (Candidate_Apply item in ListCA)
+                {
+                    item.SortNumber = i;
+                    i++;
+                    item.Candidate = db.Candidate.FirstOrDefault(x => x.Id.Equals(item.CandidateId));
+                    item.Interview = db.Interview.Where(x=>x.Candidate_ApplyId.Equals(item.CandidateId)).ToList();
+                    int n = item.Interview.Count - 1;
+                    switch (item.Interview[n].Status)
+                    {
+                        case 4:
+                            item.Status_Name = "Test OK";
+                            break;
+                        case 5:
+                            item.Status_Name = "Mời pv v1";
+                            break;
+                        case 6:
+                            item.Status_Name = "Pass v1";
+                            break;
+                        case 7:
+                            item.Status_Name = "Mời pv v2";
+                            break;
+                        case 8:
+                            item.Status_Name = "Pass v2";
+                            break;
+                    }
+                    if (item.Interview != null)
+                    {
+                        item.GetInterView = item.Interview[n];
+                    }
+                    if (item.Title != null || item.ContentEmail != null)
+                    {
+                        item.Preview = true;
+                    }
+                    else
+                    {
+                        item.Preview = false;
+                    }
+                    item.ViewEmail = new RelayCommand(p =>
+                    {
+                        EnableUpdateMail = true;
+                        EnableListEmail = false;
+                        CandidateApply = item;
+                        ShowPopEmail = ShowUpdateEmail = Visibility.Visible;
+                        EnableInputEmail = false;
+                        TitleEmail = item.Title;
+                        ContentEmail = item.ContentEmail;
+                        AttachmentName = item.Attachment_Name;
+                    });
+                    item.AddInterview = new RelayCommand(p =>
+                    {
+                        TitlePopInterview = "Thêm lịch phỏng vấn cho ứng viên: " + item.Candidate.FullName;
+                        ButtonInterviewContent = "Thêm lịch";
+                        Interview = new Interview();
+                        candidateApplyId = item.CandidateId;
+                        oldStatus = item.Interview[n].Status.Value;
+                        isCheckInterview = true;
+                        ShowPopInterview = Visibility.Visible;
+                        EnableListCandidate = false;
+                    });
+                    item.EditInterview = new RelayCommand(p =>
+                    {
+                        TitlePopInterview = "Sửa lịch phỏng vấn cho ứng viên: " + item.Candidate.FullName;
+                        ButtonInterviewContent = "Sửa lịch";
+                        Interview = item.Interview[n];
+                        isCheckInterview = false;
+                        LoadListEmployee();
+                        foreach (Employee itemE in ListEmployee)
+                        {
+                           Interview_Employee interview = db.interview_Employee.FirstOrDefault(x=>x.EmployeeId.Equals(itemE.Id) && x.InterViewId.Equals(Interview.Id));
+                            if (interview != null)
+                            {
+                                itemE.IsChecked = true;
+                            }
+                        }
+                        ShowPopInterview = Visibility.Visible;
+                        EnableListCandidate = false;
+                    });
+                    item.PassInterview = new RelayCommand(p =>
+                    {
+                        Interview interview = new Interview();
+                        interview.Candidate_ApplyId = item.CandidateId;
+                        interview.Status = 6;
+                        db.Interview.Add(interview);
+                        db.SaveChanges();
+                        LoadListTask(Status);
+                    });
+                    if (item.Interview[n].Status == 5)
+                    {
+                        item.EnableAddInter = true;
+                    }
+                    else
+                    {
+                        item.EnableAddInter = false;
+                    }
+                }
+                if (ListCA != null)
+                {
+                    EnableCheckTask = true;
+                }
+                else
+                {
+                    EnableCheckTask= false;
+                }
+            }
+            else
+            {
+                ListCA = db.Candidate_Apply.Where(x => x.IsAccept == true).ToList();                
+                for (int j = 0; j < ListCA.Count - 1; j++) 
+                {
+                    ListCA[j].SortNumber = i;
+                    i++;
+                    ListCA[j].Candidate = db.Candidate.FirstOrDefault(x => x.Id.Equals(ListCA[j].CandidateId));
+                    if (ListCA[j].Interview != null)
+                    {
+                        ListCA[j].Inter = ListCA[j].Interview[ListCA[j].Interview.Count - 1];
+                        if (ListCA[j].Inter != null)
+                        {
+                            if (ListCA[j].Inter.Status == (status - 1) || ListCA[j].Inter.Status == status)
+                            {
+                                if (ListCA[j].Title != null || ListCA[j].ContentEmail != null)
+                                {
+                                    ListCA[j].Preview = true;
+                                }
+                                else
+                                {
+                                    ListCA[j].Preview = false;
+                                }
+                                ListCA[j].ViewEmail = new RelayCommand(p =>
+                                {
+                                    EnableUpdateMail = true;
+                                    EnableListEmail = false;
+                                    CandidateApply = ListCA[j];
+                                    ShowPopEmail = ShowUpdateEmail = Visibility.Visible;
+                                    EnableInputEmail = false;
+                                    TitleEmail = ListCA[j].Title;
+                                    ContentEmail = ListCA[j].ContentEmail;
+                                    AttachmentName = ListCA[j].Attachment_Name;
+                                });
+                                ListCA[j].AddInterview = new RelayCommand(p =>
+                                {
+                                    TitlePopInterview = "Thêm lịch phỏng vấn cho ứng viên: " + ListCA[j].Candidate.FullName;
+                                    ShowPopInterview = Visibility.Visible;
+                                    Interview = new Interview();
+                                    candidateApplyId = ListCA[j].CandidateId;
+                                    oldStatus = ListCA[j].Interview[ListCA[j].Interview.Count - 1].Status.Value;
+                                    EnableListCandidate = false;
+                                    isCheckInterview = true;
+                                }); 
+                                ListCA[j].EditInterview = new RelayCommand(p =>
+                                {
+                                    TitlePopInterview = "Sửa lịch phỏng vấn cho ứng viên: " + ListCA[j].Candidate.FullName;
+                                    ButtonInterviewContent = "Sửa lịch";
+                                    Interview = ListCA[j].Interview[ListCA[j].Interview.Count - 1];
+                                    isCheckInterview = false;
+                                    List<Interview_Employee> list = db.interview_Employee.Where(x => x.InterViewId.Equals(Interview.Id)).ToList();
+                                    foreach (Employee itemE in ListEmployee)
+                                    {
+                                        foreach (Interview_Employee itemI in list)
+                                        {
+                                            if (itemE.Id == itemI.Id)
+                                            {
+                                                itemE.IsChecked = true;
+                                            }
+                                        }
+                                    }
+                                    ShowPopInterview = Visibility.Visible;
+                                    EnableListCandidate = false;
+                                }); 
+                            }
+                            else
+                            {
+                                ListCA.Remove(ListCA[j]);
+                            }
+                        }
+                        else
+                        {
+                            ListCA.Remove(ListCA[j]);
+                        }
+                    }
+                    else
+                    {
+                        ListCA.Remove(ListCA[j]);
+                    }
+                }
+                if (ListCA[ListCA.Count-1].Interview == null)
+                {
+                    ListCA = null;
+                }
+                else
+                {
+                    ListCA[ListCA.Count - 1].SortNumber = i;
+                    i++;
+                    ListCA[ListCA.Count - 1].Candidate = db.Candidate.FirstOrDefault(x => x.Id.Equals(ListCA[ListCA.Count - 1].CandidateId));
+                    if (ListCA[ListCA.Count - 1].Interview != null)
+                    {
+                        ListCA[ListCA.Count - 1].Inter = ListCA[ListCA.Count - 1].Interview[ListCA[ListCA.Count - 1].Interview.Count - 1];
+                        if (ListCA[ListCA.Count - 1].Inter != null)
+                        {
+                            if (ListCA[ListCA.Count - 1].Inter.Status == (status - 1) || ListCA[ListCA.Count - 1].Inter.Status == status)
+                            {
+                                if (ListCA[ListCA.Count - 1].Title != null || ListCA[ListCA.Count - 1].ContentEmail != null)
+                                {
+                                    ListCA[ListCA.Count - 1].Preview = true;
+                                }
+                                else
+                                {
+                                    ListCA[ListCA.Count - 1].Preview = false;
+                                }
+                                ListCA[ListCA.Count - 1].ViewEmail = new RelayCommand(p =>
+                                {
+                                    EnableUpdateMail = true;
+                                    EnableListEmail = false;
+                                    CandidateApply = ListCA[ListCA.Count - 1];
+                                    ShowPopEmail = ShowUpdateEmail = Visibility.Visible;
+                                    EnableInputEmail = false;
+                                    TitleEmail = ListCA[ListCA.Count - 1].Title;
+                                    ContentEmail = ListCA[ListCA.Count - 1].ContentEmail;
+                                    AttachmentName = ListCA[ListCA.Count - 1].Attachment_Name;
+                                });
+                                ListCA[ListCA.Count - 1].AddInterview = new RelayCommand(p =>
+                                {
+                                    TitlePopInterview = "Thêm lịch phỏng vấn cho ứng viên: " + ListCA[ListCA.Count - 1].Candidate.FullName;
+                                    ShowPopInterview = Visibility.Visible;
+                                    Interview = new Interview();
+                                    isCheckInterview = true;
+                                    candidateApplyId = ListCA[ListCA.Count - 1].CandidateId;
+                                    oldStatus = ListCA[ListCA.Count - 1].Interview[ListCA[ListCA.Count - 1].Interview.Count - 1].Status.Value;
+                                    EnableListCandidate = false;
+                                });
+
+                                ListCA[ListCA.Count - 1].EditInterview = new RelayCommand(p =>
+                                {
+                                    TitlePopInterview = "Sửa lịch phỏng vấn cho ứng viên: " + ListCA[ListCA.Count - 1].Candidate.FullName;
+                                    ButtonInterviewContent = "Sửa lịch";
+                                    Interview = ListCA[ListCA.Count - 1].Interview[ListCA[ListCA.Count - 1].Interview.Count - 1];
+                                    isCheckInterview = false;
+                                    List<Interview_Employee> list = db.interview_Employee.Where(x => x.InterViewId.Equals(Interview.Id)).ToList();
+                                    foreach (Employee itemE in ListEmployee)
+                                    {
+                                        foreach (Interview_Employee itemI in list)
+                                        {
+                                            if (itemE.Id == itemI.Id)
+                                            {
+                                                itemE.IsChecked = true;
+                                            }
+                                        }
+                                    }
+                                    ShowPopInterview = Visibility.Visible;
+                                    EnableListCandidate = false;
+                                });
+                            }
+                            else
+                            {
+                                ListCA = null;
+                            }
+                        }
+                        else
+                        {
+                            ListCA = null;
+                        }
+                    }
+                }
+
+                if (ListCA != null)
+                {
+                    EnableCheckTask = true;
+                }
+                else
+                {
+                    EnableCheckTask = false;
+                }
             }
         }
     }

@@ -12,7 +12,7 @@ namespace Models.Entities
         public int Id { get; set; }
         public int Candidate_ApplyId { get; set; }
         public DateTime InterviewTime { get; set; }
-        public string InterviewLocation { get; set; }
+        public string? InterviewLocation { get; set; }
         public string? Note { get; set; }
         public bool? IsPass { get; set; }
         public string? Title { get; set; }

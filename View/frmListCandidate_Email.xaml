@@ -1,4 +1,4 @@
-﻿<Window x:Class="View.frmListCandidate_Email"
+﻿<Window xmlns:syncfusion="http://schemas.syncfusion.com/wpf"  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"  x:Class="View.frmListCandidate_Email"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -21,7 +21,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="150"></RowDefinition>
                 </Grid.RowDefinitions>
-                <CheckBox Content="Check all" IsChecked="{Binding CheckAll}" VerticalAlignment="Bottom" Margin="15 10" Command="{Binding CheckCandidateCommand}"></CheckBox>
+                <CheckBox Content="Check all" IsChecked="{Binding CheckAll}" VerticalAlignment="Bottom" Margin="15 10"></CheckBox>
                 
                 <DockPanel Grid.Column="1" Margin="0 0 25 0">
                     <Button Content="Tạo nội dung Email" DockPanel.Dock="Right" Command="{Binding CreateMailCommand}"  Padding="20 10" Height="50" HorizontalAlignment="Right" ></Button>
@@ -84,6 +84,14 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+                        <GridViewColumn Header="Điểm bài test" Width="120">
+
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding TestPoint}"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn Header="Trạng thái" Width="120">
 
                             <GridViewColumn.CellTemplate>
@@ -92,13 +100,19 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>                        
-                        <GridViewColumn Header="Hành động" Width="200">
+                        <GridViewColumn Header="Hành động" Width="280">
 
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                       <Button Content="Preview" Command="{Binding ViewEmail}" IsEnabled="{Binding Preview}"></Button>
-                                        <Button Content="Đã liên lạc được?" Command="{Binding AcceptInterView}"></Button>
+                                    <StackPanel>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="Preview" Command="{Binding ViewEmail}" IsEnabled="{Binding Preview}"></Button>
+                                            <Button Content="Điểm" IsEnabled="{Binding enablePointButton}" Command="{Binding AddPoint}"></Button>
+                                            <Button Content="Pass Test" Command="{Binding AcceptInterView}"></Button>
+                                            <Button Content="Trượt" IsEnabled="{Binding IsAccept}"  Command="{Binding RefuseInterView}"></Button>
+                                        </StackPanel>
+                                        <Button Content="không liên lạc được" Command="{Binding AcceptInterView}"></Button>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -131,6 +145,32 @@
                     <Button Command="{Binding EnableUpdateMailCommand}" IsEnabled="{Binding EnableUpdateMail}"  Content="Chỉnh sửa" Height="35" Width="80"></Button>
                 </StackPanel>
                 <Button Content="Hủy" Width="50" Margin="0 10" Command="{Binding ExitMailCommand}"></Button>
+            </StackPanel>
+        </Border>
+        <Border Canvas.Top="300" Canvas.Left="500" Width="350" BorderBrush="Gray" BorderThickness="1" Background="White" Visibility="{Binding ShowPopPoint}">
+            <StackPanel >
+                <TextBlock Padding="15 5" Foreground="white" Text="Điểm bài test" FontSize="14" FontWeight="Bold" Background="CadetBlue" Margin="0 0 0 10"></TextBlock>
+                <dxe:SpinEdit Text="{Binding TestPoint}" Margin="50 10" MinValue="0" MaxValue="100" HorizontalContentAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="OK" Width="50" Margin="0 10 10 10" Command="{Binding OkPointCommand}"></Button>
+                    <Button Content="Hủy" Width="50" Margin="0 10" Command="{Binding ExitPointCommand}"></Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <Border Canvas.Top="250" Canvas.Left="500" Width="350" BorderBrush="Gray" BorderThickness="1" Background="White" Visibility="{Binding ShowNote}">
+            <StackPanel >
+                <TextBlock Padding="15 5" Foreground="white" Text="Ghi chú" FontSize="14" FontWeight="Bold" Background="CadetBlue" Margin="0 0 0 10"></TextBlock>
+                <RichTextBox Margin="20 10" Height="150">
+                    <FlowDocument>
+                        <Paragraph>
+                            <Run Text="{Binding NoteRefuse}"></Run>
+                        </Paragraph>
+                    </FlowDocument>
+                </RichTextBox>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="OK" Width="50" Margin="0 10 10 10" Command="{Binding OkNoteCommand}"></Button>
+                    <Button Content="Hủy" Width="50" Margin="0 10" Command="{Binding ExitNoteCommand}"></Button>
+                </StackPanel>
             </StackPanel>
         </Border>
     </Canvas>

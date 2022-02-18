@@ -30,6 +30,8 @@ namespace Models.Configurations
                 .IsRequired(false);
             builder.Property(x => x.IsAccept)
                 .IsRequired(false);
+            builder.Property(x => x.CanBeContacted)
+                .IsRequired(false);
             builder.Property(x => x.TestPoint)
                 .IsRequired(false);
         }

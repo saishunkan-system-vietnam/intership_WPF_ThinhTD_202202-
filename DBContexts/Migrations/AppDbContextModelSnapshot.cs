@@ -90,6 +90,9 @@ namespace DBContext.Migrations
                     b.Property<string>("Attachment_Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("CanBeContacted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ContentEmail")
                         .HasColumnType("nvarchar(max)");
 
@@ -171,7 +174,6 @@ namespace DBContext.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InterviewLocation")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("InterviewTime")

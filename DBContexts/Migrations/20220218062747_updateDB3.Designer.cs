@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DBContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220217092343_update_mail")]
-    partial class update_mail
+    [Migration("20220218062747_updateDB3")]
+    partial class updateDB3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -91,6 +91,9 @@ namespace DBContext.Migrations
 
                     b.Property<string>("Attachment_Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("CanBeContacted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ContentEmail")
                         .HasColumnType("nvarchar(max)");
@@ -173,7 +176,6 @@ namespace DBContext.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InterviewLocation")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("InterviewTime")

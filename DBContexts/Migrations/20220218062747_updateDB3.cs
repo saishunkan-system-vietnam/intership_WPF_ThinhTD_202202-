@@ -4,7 +4,7 @@
 
 namespace DBContext.Migrations
 {
-    public partial class update_mail : Migration
+    public partial class updateDB3 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,6 +21,14 @@ namespace DBContext.Migrations
                 table: "Employee",
                 newName: "FullName");
 
+            migrationBuilder.AlterColumn<string>(
+                name: "InterviewLocation",
+                table: "Interview",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
             migrationBuilder.AddColumn<bool>(
                 name: "IsPass",
                 table: "Interview",
@@ -31,6 +39,12 @@ namespace DBContext.Migrations
                 name: "MeetingRoom",
                 table: "Interview",
                 type: "nvarchar(max)",
+                nullable: true);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "CanBeContacted",
+                table: "Candidate_Apply",
+                type: "bit",
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
@@ -51,6 +65,10 @@ namespace DBContext.Migrations
                 table: "Interview");
 
             migrationBuilder.DropColumn(
+                name: "CanBeContacted",
+                table: "Candidate_Apply");
+
+            migrationBuilder.DropColumn(
                 name: "TestPoint",
                 table: "Candidate_Apply");
 
@@ -58,6 +76,16 @@ namespace DBContext.Migrations
                 name: "FullName",
                 table: "Employee",
                 newName: "LastName");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "InterviewLocation",
+                table: "Interview",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "TestPoint",
